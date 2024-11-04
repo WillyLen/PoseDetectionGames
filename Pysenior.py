@@ -46,24 +46,24 @@ PageData = [
 games = [
     {"name": "躲隕石", "scene_image": "Game_1_1.jpg", "intro_image": "Act_1_1.png", "intro_text": "移動身體來操控人物躲避物品，時間過越久分數越高"},
     {"name": "接金幣", "scene_image": "Game_1_2.jpg", "intro_image": "Act_1_2.png", "intro_text": "移動身體來操控人物接金幣，時間到接越多顆分數越高"},
-    {"name": "接金幣", "scene_image": "Game_1_3.jpg", "intro_image": "Act_1_3.png", "intro_text": "身體來回蹲下操控鏟子挖出蘿蔔，一個一分"},
-    {"name": "接金幣", "scene_image": "Game_1_4.jpg", "intro_image": "Act_1_4.png", "intro_text": "雙腳保持頻率抬高，速度加快，反之減速，被狼追到就會結束遊戲"},
-    {"name": "接金幣", "scene_image": "Game_1_5.jpg", "intro_image": "Act_1_5.png", "intro_text": "雙手即網子，用兩個網子捕捉蝴蝶"},
-    {"name": "接金幣", "scene_image": "Game_2_1.jpg", "intro_image": "Act_2_1.png", "intro_text": "雙手重複舉高放下，時限內去除越多稻草分數越高"},
-    {"name": "接金幣", "scene_image": "Game_2_2.jpg", "intro_image": "Act_2_2.png", "intro_text": "當畫面出現左腳時抬左腳，反之右腳，每次踏步農田都會產生變化"},
-    {"name": "接金幣", "scene_image": "Game_2_3.jpg", "intro_image": "Act_2_3.png", "intro_text": "雙手向上舉起，每做一次就會長出一片稻穗"},
-    {"name": "接金幣", "scene_image": "Game_2_4.jpg", "intro_image": "Act_2_4.png", "intro_text": "雙手向上舉起，每做一次就會長出一片稻穗"},
-    {"name": "接金幣", "scene_image": "Game_2_5.jpg", "intro_image": "Act_2_5.png", "intro_text": "雙腳張開與肩同寬，將腿部抬高，再放下"},
-    {"name": "接金幣", "scene_image": "Game_3_1.jpg", "intro_image": "Act_3_1.png", "intro_text": "當氣球出現於腳下時，可舉腳踩踏，若身體過於傾斜，人物將會跌倒"},
-    {"name": "接金幣", "scene_image": "Game_3_2.jpg", "intro_image": "Act_3_2.png", "intro_text": "移動骨盆來控制接雞蛋的位置，一個一分"},
-    {"name": "接金幣", "scene_image": "Game_3_3.jpg", "intro_image": "Act_3_3.png", "intro_text": "身體呈側身，將手臂伸往前，控制籃子接果實，需再回到綠點，才能出現下一個"},
-    {"name": "接金幣", "scene_image": "Game_3_4.jpg", "intro_image": "Act_3_4.png", "intro_text": "當氣球出現於腳下時，可舉腳踩踏，若身體過於傾斜，人物將會跌倒"},
-    {"name": "接金幣", "scene_image": "Game_3_5.jpg", "intro_image": "Act_3_5.png", "intro_text": "用雙手伸向紅箭頭之位置後，回到中心綠點，才會有下一個紅箭頭出現"},
-    {"name": "接金幣", "scene_image": "Game_4_1.jpg", "intro_image": "Act_4_1.png", "intro_text": "身體控制飛船左右，舉手發射子彈"},
-    {"name": "接金幣", "scene_image": "Game_4_2.jpg", "intro_image": "Act_4_2.png", "intro_text": "手掌控制擋板上下，球進結束遊戲，按下空白鍵結束"},
-    {"name": "接金幣", "scene_image": "Game_4_3.jpg", "intro_image": "Act_4_3.png", "intro_text": "手掌控制擋板上下，球進結束遊戲，按下空白鍵結束"},
-    {"name": "接金幣", "scene_image": "Game_4_4.jpg", "intro_image": "Act_4_4.png", "intro_text": "頭部控制飛鳥上下移動，每過一個階段速度將會提升，碰到水管遊戲結束"},
-    {"name": "接金幣", "scene_image": "Game_4_5.jpg", "intro_image": "Act_4_5.png", "intro_text": "拿出鮮艷顏色的筆，就能在畫面上作畫"},
+    {"name": "挖蘿蔔", "scene_image": "Game_1_3.jpg", "intro_image": "Act_1_3.png", "intro_text": "身體來回蹲下操控鏟子挖出蘿蔔，一個一分"},
+    {"name": "追趕跳碰", "scene_image": "Game_1_4.jpg", "intro_image": "Act_1_4.png", "intro_text": "雙腳保持頻率抬高，速度加快，反之減速，被狼追到就會結束遊戲"},
+    {"name": "抓蝴蝶", "scene_image": "Game_1_5.jpg", "intro_image": "Act_1_5.png", "intro_text": "雙手即網子，用兩個網子捕捉蝴蝶"},
+    {"name": "鬆土", "scene_image": "Game_2_1.jpg", "intro_image": "Act_2_1.png", "intro_text": "雙手重複舉高放下，時限內去除越多稻草分數越高"},
+    {"name": "踩水車", "scene_image": "Game_2_2.jpg", "intro_image": "Act_2_2.png", "intro_text": "當畫面出現左腳時抬左腳，反之右腳，每次踏步農田都會產生變化"},
+    {"name": "施肥", "scene_image": "Game_2_3.jpg", "intro_image": "Act_2_3.png", "intro_text": "雙手向上舉起，每做一次就會長出一片稻穗"},
+    {"name": "收割", "scene_image": "Game_2_4.jpg", "intro_image": "Act_2_4.png", "intro_text": "雙手向上舉起，每做一次就會長出一片稻穗"},
+    {"name": "椿米", "scene_image": "Game_2_5.jpg", "intro_image": "Act_2_5.png", "intro_text": "雙腳張開與肩同寬，將腿部抬高，再放下"},
+    {"name": "刺氣球", "scene_image": "Game_3_1.jpg", "intro_image": "Act_3_1.png", "intro_text": "當氣球出現於腳下時，可舉腳踩踏，若身體過於傾斜，人物將會跌倒"},
+    {"name": "接雞蛋", "scene_image": "Game_3_2.jpg", "intro_image": "Act_3_2.png", "intro_text": "移動骨盆來控制接雞蛋的位置，一個一分"},
+    {"name": "接果子", "scene_image": "Game_3_3.jpg", "intro_image": "Act_3_3.png", "intro_text": "身體呈側身，將手臂伸往前，控制籃子接果實，需再回到綠點，才能出現下一個"},
+    {"name": "踩氣球", "scene_image": "Game_3_4.jpg", "intro_image": "Act_3_4.png", "intro_text": "當氣球出現於腳下時，可舉腳踩踏，若身體過於傾斜，人物將會跌倒"},
+    {"name": "跳舞機", "scene_image": "Game_3_5.jpg", "intro_image": "Act_3_5.png", "intro_text": "用雙手伸向紅箭頭之位置後，回到中心綠點，才會有下一個紅箭頭出現"},
+    {"name": "太空戰", "scene_image": "Game_4_1.jpg", "intro_image": "Act_4_1.png", "intro_text": "身體控制飛船左右，舉手發射子彈"},
+    {"name": "桌球", "scene_image": "Game_4_2.jpg", "intro_image": "Act_4_2.png", "intro_text": "手掌控制擋板上下，球進結束遊戲，按下空白鍵結束"},
+    {"name": "貪食蛇", "scene_image": "Game_4_3.jpg", "intro_image": "Act_4_3.png", "intro_text": "手掌控制擋板上下，球進結束遊戲，按下空白鍵結束"},
+    {"name": "跑酷鳥", "scene_image": "Game_4_4.jpg", "intro_image": "Act_4_4.png", "intro_text": "頭部控制飛鳥上下移動，每過一個階段速度將會提升，碰到水管遊戲結束"},
+    {"name": "虛擬筆", "scene_image": "Game_4_5.jpg", "intro_image": "Act_4_5.png", "intro_text": "拿出鮮艷顏色的筆，就能在畫面上作畫"},
 ]
 
 
@@ -431,22 +431,22 @@ def main():
 
         def choose0(self):
             update_game_data(1,0)
-            pg_manager.show_page(GameMenuPage, PageData)
+            pg_manager.show_page(GameMenuPage)
         def choose1(self):
             update_game_data(1,1)
-            pg_manager.show_page(GameMenuPage, PageData)
+            pg_manager.show_page(GameMenuPage)
         def choose2(self):
             update_game_data(1,2)
-            pg_manager.show_page(GameMenuPage, PageData)
+            pg_manager.show_page(GameMenuPage)
         def choose3(self):
             update_game_data(1,3)
-            pg_manager.show_page(GameMenuPage, PageData)
+            pg_manager.show_page(GameMenuPage)
         def choose4(self):
             update_game_data(1,4)
-            pg_manager.show_page(GameMenuPage, PageData)
+            pg_manager.show_page(GameMenuPage)
         def choose5(self):
             update_game_data(1,5)
-            pg_manager.show_page(GameMenuPage, PageData)
+            pg_manager.show_page(GameMenuPage)
         def prev_page(self):
             pg_manager.show_page(LoginPage)
             global RELOADING
