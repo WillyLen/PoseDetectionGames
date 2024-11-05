@@ -553,7 +553,18 @@ def main():
             pg_manager.show_page(IntroPage, self.game_data)
 
         def detect(self):
-            subprocess.Popen(["python3", "Detect.py", "11", "12"])#剩下傳遞遊戲代號，決定繪圖節點及線高和提示文字
+            if self.game_data["name"] == "躲隕石" or "接金幣" or "挖蘿蔔" or "太空戰":
+                subprocess.Popen(["python3", "Detect.py", "11", "12"])#左肩:1️⃣1️⃣ + 右肩:1️⃣2️⃣
+            elif self.game_data["name"] == "追趕跳碰" or "踩水車" or "椿米" or "踩氣球":
+                subprocess.Popen(["python3", "Detect.py", "25", "26"])#左膝:2️⃣5️⃣ ＋ 右膝:2️⃣6️⃣
+            elif self.game_data["name"] == "抓蝴蝶" or "鬆土" or "施肥" or "收割" or "刺氣球" or "接果子" or "跳舞機" or"桌球":
+                subprocess.Popen(["python3", "Detect.py", "17", "18"])#左腕:1️⃣7️⃣ ＋ 右腕:1️⃣8️⃣
+            elif self.game_data["name"] == "接雞蛋":
+                subprocess.Popen(["python3", "Detect.py", "23", "24"])#左臀:2️⃣3️⃣＋ 右臀:2️⃣4️⃣
+            elif self.game_data["name"] == "貪食蛇":
+                subprocess.Popen(["python3", "Detect.py", "21", "22"])#左拇指:2️⃣1️⃣ + 右拇指2️⃣2️⃣
+            elif self.game_data["name"] == "跑酷鳥":
+                subprocess.Popen(["python3", "Detect.py", "1", "4"])#左眼: 1️⃣ + 右眼: 4️⃣
 
     class IntroPage(tk.Frame):
         def __init__(self, master, game_data):
