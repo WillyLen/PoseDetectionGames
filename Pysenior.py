@@ -539,7 +539,7 @@ def main():
             intro_button = tk.Button(self, text="介紹", font=("Helvetica", 35), fg="purple", width=10, command=self.intro)
             intro_button.grid(row=2, column=1, padx=5, pady=20)
 
-            detect_button = tk.Button(self, text="偵測", font=("Helvetica", 35), fg="orange", width=10)
+            detect_button = tk.Button(self, text="偵測", font=("Helvetica", 35), fg="orange", width=10, command=self.detect)
             detect_button.grid(row=2, column=2, padx=5, pady=20)
 
             start_button = tk.Button(self, text="開始", font=("Helvetica", 35), fg="red", width=10)
@@ -551,6 +551,9 @@ def main():
 
         def intro(self):
             pg_manager.show_page(IntroPage, self.game_data)
+
+        def detect(self):
+            subprocess.Popen(["python3", "Detect.py", "11", "12"])#剩下傳遞遊戲代號，決定繪圖節點及線高和提示文字
 
     class IntroPage(tk.Frame):
         def __init__(self, master, game_data):
@@ -628,15 +631,15 @@ def main():
     pg_manager = PGManager(root)
 
     # 頁面切換，顯示初始頁面
-    decrypt_csv('Data/verify.csv', ENCRYPTKEY)
-    if grab_verify_data_int(4) == 0:
-        if grab_verify_data(3) == "null":
-            pg_manager.show_page(FirstLoginPage)
-        else:
-            pg_manager.show_page(InitPage)
-    else:
-            pg_manager.show_page(LoginPage)
-    # pg_manager.show_page(LoadingPage,games[0])
+    # decrypt_csv('Data/verify.csv', ENCRYPTKEY)
+    # if grab_verify_data_int(4) == 0:
+    #     if grab_verify_data(3) == "null":
+    #         pg_manager.show_page(FirstLoginPage)
+    #     else:
+    #         pg_manager.show_page(InitPage)
+    # else:
+    #         pg_manager.show_page(LoginPage)
+    pg_manager.show_page(GameMenuPage)
     # 進入主循環
     root.mainloop()
 
