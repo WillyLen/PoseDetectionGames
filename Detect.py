@@ -7,9 +7,9 @@ import numpy as np
 GameInfo = [
         {"code": "1", "line_height": "-10", "text": "檢測雙肩是否有節點"},{"code": "2", "line_height": "-10", "text": "檢測雙肩是否有節點"},
         {"code": "3", "line_height": "432", "text": "檢測膝蓋節點蹲下後是否能碰到紅線"},{"code": "4", "line_height": "432", "text": "檢測膝蓋節點在抬腳及放下時，是否在線的上下方"},
-        {"code": "5", "line_height": "-10", "text": "檢測雙手是否有節點"},{"code": "6", "line_height": "144", "text": "檢測雙手向上舉直後是否能超過紅線"},
-        {"code": "7", "line_height": "432", "text": "檢測膝蓋節點在抬腳及放下時，是否在線的上下方"},{"code": "8", "line_height": "114", "text": "檢測雙手向上舉直後是否能超過紅線"},
-        {"code": "9", "line_height": "144", "text": "檢測雙手向上舉直後是否能超過紅線"},{"code": "10", "line_height": "576", "text": "檢測膝蓋節點在抬腳及放下時，是否在線的上下方"},
+        {"code": "5", "line_height": "-10", "text": "檢測雙手是否有節點"},{"code": "6", "line_height": "72", "text": "檢測雙手向上舉直後是否能超過紅線"},
+        {"code": "7", "line_height": "432", "text": "檢測膝蓋節點在抬腳及放下時，是否在線的上下方"},{"code": "8", "line_height": "72", "text": "檢測雙手向上舉直後是否能超過紅線"},
+        {"code": "9", "line_height": "72", "text": "檢測雙手向上舉直後是否能超過紅線"},{"code": "10", "line_height": "576", "text": "檢測膝蓋節點在抬腳及放下時，是否在線的上下方"},
         {"code": "11", "line_height": "-10", "text": "檢測雙手是否有節點"},{"code": "12", "line_height": "-10", "text": "檢測骨盆兩側是否有節點"},
         {"code": "13", "line_height": "-10", "text": "檢測雙手是否有節點"},{"code": "14", "line_height": "432", "text": "檢測骨盆兩側是否有節點及膝蓋節點在抬腳及放下時，是否在線的上下方"},
         {"code": "15", "line_height": "-10", "text": "檢測雙手是否有節點"},{"code": "16", "line_height": "-10", "text": "檢測雙肩是否有節點"},
@@ -86,7 +86,7 @@ def show_camera_with_pose():
             # 在图像上添加中文提示
             img_pil = Image.fromarray(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
             draw = ImageDraw.Draw(img_pil)
-            draw.text((0, 50), text, font=font, fill=(255, 0, 0))  # 红色文字
+            draw.text((0, 0), text, font=font, fill=(0, 48, 96))
             img = cv2.cvtColor(np.array(img_pil), cv2.COLOR_RGB2BGR)
             cv2.line(img, (0,line_height), (1280,line_height), (0, 0, 255), 10)
 
