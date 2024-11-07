@@ -542,7 +542,7 @@ def main():
             detect_button = tk.Button(self, text="偵測", font=("Helvetica", 35), fg="orange", width=10, command=self.detect)
             detect_button.grid(row=2, column=2, padx=5, pady=20)
 
-            start_button = tk.Button(self, text="開始", font=("Helvetica", 35), fg="red", width=10)
+            start_button = tk.Button(self, text="開始", font=("Helvetica", 35), fg="red", width=10, command=self.start)
             start_button.grid(row=2, column=3, padx=5, pady=20)
 
 
@@ -565,7 +565,9 @@ def main():
                 subprocess.Popen(["python3", "Detect.py", self.game_data["code"], "21", "22"])  # 左拇指: 21 + 右拇指: 22
             elif self.game_data["code"] == "19":
                 subprocess.Popen(["python3", "Detect.py", self.game_data["code"], "1", "4"])   # 左眼: 1 + 右眼: 4
-
+        
+        def start(self):
+            subprocess.Popen(["python3", f"Games/Game-{self.game_data["code"]}.py"])
 
     class IntroPage(tk.Frame):
         def __init__(self, master, game_data):
@@ -595,47 +597,6 @@ def main():
 
         def back(self):
             pg_manager.show_page(LoadingPage, self.game_data)
-
-    def Start_game1():
-        subprocess.Popen(["python3", "game-1.py"])
-    def Start_game2():
-        subprocess.Popen(["python3", "game-2.py"])
-    def Start_game3():
-        subprocess.Popen(["python3", "game-3.py"])
-    def Start_game4():
-        subprocess.Popen(["python3", "game-4.py"])
-    def Start_game5():
-        subprocess.Popen(["python3", "game-5.py"])
-    def Start_game6():
-        subprocess.Popen(["python3", "game-6.py"])
-    def Start_game7():
-        subprocess.Popen(["python3", "game-7.py"])
-    def Start_game8():
-        subprocess.Popen(["python3", "game-8.py"])
-    def Start_game9():
-        subprocess.Popen(["python3", "game-9.py"])
-    def Start_game10():
-        subprocess.Popen(["python3", "game-10.py"])
-    def Start_game11():
-        subprocess.Popen(["python3", "game-11.py"])
-    def Start_game12():
-        subprocess.Popen(["python3", "game-12.py"])
-    def Start_game13():
-        subprocess.Popen(["python3", "game-13.py"])
-    def Start_game14():
-        subprocess.Popen(["python3", "game-14.py"])
-    def Start_game15():
-        subprocess.Popen(["python3", "game-15.py"])
-    def Start_game16():
-        subprocess.Popen(["python3", "game-16.py"])
-    def Start_game17():
-        subprocess.Popen(["python3", "game-17.py"])
-    def Start_game18():
-        subprocess.Popen(["python3", "game-18.py"])
-    def Start_game19():
-        subprocess.Popen(["python3", "game-19.py"])
-    def Start_game20():
-        subprocess.Popen(["python3", "game-20.py"])
 
     # 初始化 Tk 
     root = tk.Tk()
