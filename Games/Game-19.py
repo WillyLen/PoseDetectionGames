@@ -7,6 +7,7 @@ import os
 import math
 import sys
 import pygame
+import tkinter as tk
 import mediapipe as mp
 import random
 import cv2
@@ -17,6 +18,9 @@ from Utils import update_game_data, grab_game_data
 from Utils import update_verify_data, grab_verify_data, grab_verify_data_int
 from Utils import get_mac, hash_mac, hash_str, generate_key, hash_x, hash_key 
 from Utils import encrypt, encrypt_csv, decrypt, decrypt_csv
+
+root = tk.Tk()
+root.withdraw()
 
 # 參數調整
 time_between_pipe_spawn = grab_game_data(11)
@@ -29,7 +33,11 @@ pygame.init()
 
 # Initialize required elements/environment
 VID_CAP = cv2.VideoCapture(0)
-window_size = (VID_CAP.get(cv2.CAP_PROP_FRAME_WIDTH), VID_CAP.get(cv2.CAP_PROP_FRAME_HEIGHT))  # width by height
+screen_width=root.winfo_screenwidth()
+screen_height=root.winfo_screenheight()
+VID_CAP.set(3, screen_width)  # 设置摄像头的宽度为 screen_width
+VID_CAP.set(4, screen_height)  # 设置摄像头的高度为 screen_height
+window_size = (screen_width, screen_height)  # width by height
 screen = pygame.display.set_mode(window_size)
 
 # Bird and pipe init
@@ -38,7 +46,7 @@ bird_img = pygame.transform.scale(bird_img, (bird_img.get_width() / 6, bird_img.
 bird_frame = bird_img.get_rect()
 bird_frame.center = (window_size[0] // 6, window_size[1] // 2)
 pipe_frames = deque()
-pipe_img = pygame.image.load("Resource/img/newgame/pipe_sprite_single.png")
+pipe_img = pygame.image.load("Resources/img/newgame/pipe_sprite_single.png")
 
 pipe_starting_template = pipe_img.get_rect()
 space_between_pipes = 300
@@ -149,14 +157,14 @@ with mp_face_mesh.FaceMesh(
         # Time to add new pipes
         if pipeSpawnTimer == 0:
             top = pipe_starting_template.copy()
-            top.x, top.y = window_size[0], random.randint(-950, -800)
+            top.x, top.y = window_size[0], random.randint(-950, -300)
             bottom = pipe_starting_template.copy()
-            bottom.x, bottom.y = window_size[0], top.y + 900 + space_between_pipes
+            bottom.x, bottom.y = window_size[0], top.y + 1100 + space_between_pipes
             pipe_frames.append([top, bottom])
 
         # Update pipe spawn timer - make it cyclical
         pipeSpawnTimer += 1
-        if pipeSpawnTimer >= time_between_pipe_spawn: pipeSpawnTimer = 0
+        if pipeSpawnTimer >= time_between_pipe_spawn * 1.5: pipeSpawnTimer = 0
 
         # Update stage
         if time.time() - game_clock >= 10:

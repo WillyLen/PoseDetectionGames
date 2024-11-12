@@ -1,4 +1,5 @@
 import cvzone
+import tkinter as tk
 from PIL import Image, ImageTk
 from cvzone.HandTrackingModule import HandDetector
 from collections import deque
@@ -17,9 +18,16 @@ from Utils import update_verify_data, grab_verify_data, grab_verify_data_int
 from Utils import get_mac, hash_mac, hash_str, generate_key, hash_x, hash_key 
 from Utils import encrypt, encrypt_csv, decrypt, decrypt_csv
 
+root = tk.Tk()
+root.withdraw()
+
+screen_width = root.winfo_screenwidth()
+screen_height = root.winfo_screenheight()
+
 def start_screen():
     """顯示開始畫面並等待按下「Enter」鍵以開始遊戲。"""
     imgStart = cv2.imread("Resource/img/newgame/Background.png")
+    imgStart = cv2.resize(imgStart, (screen_width, screen_height))
     if imgStart is None:
         print("Error: 無法載入開始畫面圖片。請檢查圖片路徑。")
         return
@@ -40,8 +48,8 @@ x = grab_game_data(9)
 y = grab_game_data(10)
 
 cap = cv2.VideoCapture(0)
-cap.set(3, 1280)
-cap.set(4, 720)
+cap.set(3, screen_width)#1280
+cap.set(4, screen_height)#720
 
 # 加載圖片
 imgBackground = cv2.imread("Resource/img/newgame/Background.png")
@@ -62,10 +70,6 @@ gameOver = False
 score = [0, 0]
 
 while True:
-    print("speedX = " +str(speedX))
-    print("speedY = " +str(speedY))
-    print("ballPos[0] = " +str(ballPos[0]))
-    print("ballPos[1] = " +str(ballPos[1]))
 
     _, img = cap.read()
     img = cv2.flip(img, 1)
@@ -91,24 +95,24 @@ while True:
             x, y, w, h = hand['bbox']
             h1, w1, _ = imgBat1.shape
             y1 = y - h1 // 2
-            y1 = np.clip(y1, 20, 415)
+            y1 = np.clip(y1, 20, screen_height-h1-20)
 
             if hand['type'] == "Left":
-                img = cvzone.overlayPNG(img, imgBat1, (59, y1))
-                if 59 < ballPos[0] < 59 + w1 and y1 < ballPos[1] < y1 + h1:
+                img = cvzone.overlayPNG(img, imgBat1, (int(screen_width*0.046875), y1))
+                if screen_width*0.046875 < ballPos[0] < screen_width*0.046875 + w1 and y1 < ballPos[1] < y1 + h1:
                     speedX = -speedX
                     ballPos[0] += 30
                     score[0] += 1
 
             if hand['type'] == "Right":
-                img = cvzone.overlayPNG(img, imgBat2, (1195, y1))
-                if 1195 - 50 < ballPos[0] < 1195 and y1 < ballPos[1] < y1 + h1:
+                img = cvzone.overlayPNG(img, imgBat2, (int(screen_width*0.9336), y1))
+                if screen_width*0.9336 - 50 < ballPos[0] < screen_width*0.9336 and y1 < ballPos[1] < y1 + h1:
                     speedX = -speedX
                     ballPos[0] -= 30
                     score[1] += 1
 
     # 遊戲結束條件
-    if ballPos[0] < 40 or ballPos[0] > 1200:
+    if ballPos[0] < screen_width * 0.03125 or ballPos[0] > screen_width * 0.9375:
         gameOver = True
 
     if gameOver:
@@ -118,7 +122,7 @@ while True:
 
     else:
         # 球移動
-        if ballPos[1] >= 500 or ballPos[1] <= 10:
+        if ballPos[1] >= screen_height * 0.7 or ballPos[1] <= 10:
             speedY = -speedY
 
         ballPos[0] += speedX
@@ -128,15 +132,13 @@ while True:
         img = cvzone.overlayPNG(img, imgBall, ballPos)
 
         # 顯示分數
-        cv2.putText(img, str(score[0]), (300, 650), cv2.FONT_HERSHEY_COMPLEX, 3, (255, 255, 255), 5)
-        cv2.putText(img, str(score[1]), (900, 650), cv2.FONT_HERSHEY_COMPLEX, 3, (255, 255, 255), 5)
+        cv2.putText(img, str(score[0]), (int(screen_width/4), 650), cv2.FONT_HERSHEY_COMPLEX, 3, (255, 255, 255), 5)
+        cv2.putText(img, str(score[1]), (int(screen_width*3/4), 650), cv2.FONT_HERSHEY_COMPLEX, 3, (255, 255, 255), 5)
 
         # 更新分數數據
-        point1, point2 = score[0], score[1]
-        if grab_game_data(28) == 0 or grab_game_data(28) < point1:
-            update_game_data(28, point1)
-        if grab_game_data(29) == 0 or grab_game_data(29) < point2:
-            update_game_data(29, point2)
+        point = score[0]+score[1]
+        if grab_game_data(28) == 0 or grab_game_data(28) < point:
+            update_game_data(28, point)
 
     cv2.imshow("tabletennis", img)
     key = cv2.waitKey(1)

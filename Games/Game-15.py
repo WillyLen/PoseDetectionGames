@@ -71,12 +71,12 @@ blue_arrows = []
 for i in range(8):
     blue_img = pygame.image.load(os.path.join(custom, f"Obj_15_0_{i}.png")).convert()
     blue_img.set_colorkey(BLACK)
-    blue_arrows.append(pygame.transform.scale(blue_img, (125, 125)))
+    blue_arrows.append(pygame.transform.scale(blue_img, (WIDTH* 0.125, WIDTH* 0.125)))
 red_arrows = []
 for i in range(8):
     red_img = pygame.image.load(os.path.join(custom, f"Obj_15_1_{i}.png")).convert()
     red_img.set_colorkey(BLACK)
-    red_arrows.append(pygame.transform.scale(red_img, (125, 125)))
+    red_arrows.append(pygame.transform.scale(red_img, (WIDTH* 0.125, WIDTH* 0.125)))
 ###
 background_img = pygame.transform.scale(background_img, (WIDTH, HEIGHT))
 greendot_img = pygame.image.load(os.path.join("Resource/img/普通", "Greendot.png")).convert()
@@ -194,7 +194,7 @@ class Arrow_0(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.radius = WIDTH / 20
         self.rect.centerx = WIDTH / 2
-        self.rect.centery = HEIGHT * 2 / 5
+        self.rect.centery = HEIGHT * 1 / 5
     # def update(self):
 
 class Arrow_1(pygame.sprite.Sprite):
@@ -205,7 +205,7 @@ class Arrow_1(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.radius = WIDTH / 20
         self.rect.centerx = WIDTH * 3 / 4
-        self.rect.centery = HEIGHT * 2 / 5
+        self.rect.centery = HEIGHT * 1 / 5
     # def update(self):
 
 class Arrow_2(pygame.sprite.Sprite):
@@ -216,7 +216,7 @@ class Arrow_2(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.radius = WIDTH / 20
         self.rect.centerx = WIDTH * 3 / 4
-        self.rect.centery = HEIGHT * 3 / 5
+        self.rect.centery = HEIGHT * 0.5
     # def update(self):
 
 class Arrow_3(pygame.sprite.Sprite):
@@ -260,7 +260,7 @@ class Arrow_6(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.radius = HEIGHT  / 2
         self.rect.centerx = WIDTH / 4
-        self.rect.centery = HEIGHT * 3 / 5
+        self.rect.centery = HEIGHT * 0.5
     # def update(self):
 
 class Arrow_7(pygame.sprite.Sprite):
@@ -272,7 +272,7 @@ class Arrow_7(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.radius = HEIGHT  / 2
         self.rect.centerx = WIDTH / 4
-        self.rect.centery = HEIGHT * 2 / 5
+        self.rect.centery = HEIGHT * 1 / 5
     # def update(self):
 
 all_sprites = pygame.sprite.Group()
@@ -409,45 +409,45 @@ while running:
     elif chosen == 7:
         arrow_7.image = red_arrows[7]
 
-    if hand.rect.x < 350:
-        if hand.rect.y < 160:
+    if hand.rect.x < WIDTH * 0.35:
+        if hand.rect.y < HEIGHT * 0.3:
             if chosen == 7:
                 arrow_7.image = blue_arrows[7]
                 score += 1
                 chosen = 8
-        elif hand.rect.y > 160 and hand.rect.y < 390:
+        elif hand.rect.y > HEIGHT * 0.3 and hand.rect.y < HEIGHT * 0.7:
             if chosen == 6:
                 arrow_6.image = blue_arrows[6]
                 score += 1
                 chosen = 8
-        elif hand.rect.y > 390:
+        elif hand.rect.y > HEIGHT * 0.7:
             if chosen == 5:
                 arrow_5.image = blue_arrows[5]
                 score += 1
                 chosen = 8
-    elif hand.rect.x > 350 and hand.rect.x < 650:
-        if hand.rect.y < 160:
+    elif hand.rect.x > WIDTH * 0.35 and hand.rect.x < WIDTH * 0.65:
+        if hand.rect.y < HEIGHT * 0.3:
             if chosen == 0:
                 arrow_0.image = blue_arrows[0]
                 score += 1
                 chosen = 8
-        elif hand.rect.y > 390:
+        elif hand.rect.y > HEIGHT * 0.7:
             if chosen == 4:
                 arrow_4.image = blue_arrows[4]
                 score += 1
                 chosen = 8
-    elif hand.rect.x > 650:
-        if hand.rect.y < 160:
+    elif hand.rect.x > WIDTH * 0.65:
+        if hand.rect.y < HEIGHT * 0.3:
             if chosen == 1:
                 arrow_1.image = blue_arrows[1]
                 score += 1
                 chosen = 8
-        elif hand.rect.y > 160 and hand.rect.y < 390:
+        elif hand.rect.y > HEIGHT * 0.3 and hand.rect.y < HEIGHT * 0.7:
             if chosen == 2:
                 arrow_2.image = blue_arrows[2]
                 score += 1
                 chosen = 8
-        elif hand.rect.y > 390:
+        elif hand.rect.y > HEIGHT * 0.7:
             if chosen == 3:
                 arrow_3.image = blue_arrows[3]
                 score += 1

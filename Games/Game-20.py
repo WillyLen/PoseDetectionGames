@@ -5,6 +5,7 @@ from collections import deque
 import numpy as np
 import os
 import math
+import tkinter as tk
 import sys
 import pygame
 import mediapipe as mp
@@ -17,8 +18,15 @@ from Utils import update_verify_data, grab_verify_data, grab_verify_data_int
 from Utils import get_mac, hash_mac, hash_str, generate_key, hash_x, hash_key 
 from Utils import encrypt, encrypt_csv, decrypt, decrypt_csv
 
+root = tk.Tk()
+root.withdraw()
+
 quit = False
 cap = cv2.VideoCapture(0)
+screen_width=root.winfo_screenwidth()
+screen_height=root.winfo_screenheight()
+cap.set(3, screen_width)  # 设置摄像头的宽度为 screen_width
+cap.set(4, screen_height)  # 设置摄像头的高度为 screen_height
 # Blue Green Yellow
 penColorHSV = [[86, 121, 205, 111, 245, 255],
                 [46, 78, 204, 71, 255, 255],
@@ -38,7 +46,7 @@ def findPen(img):
         upper = np.array(penColorHSV[i][3:6])
 
         mask = cv2.inRange(hsv, lower, upper)
-        mask = cv2.resize(mask, (int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)), int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))))
+        mask = cv2.resize(mask, (1280, 720))
         # result = cv2.bitwise_and(img, img, mask=mask)
         penx, peny = findContour(mask)
         cv2.circle(imgContour, (penx, peny), 10, penColorBGR[i], cv2.FILLED)
