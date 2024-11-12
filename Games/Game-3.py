@@ -133,19 +133,18 @@ class Shovel(pygame.sprite.Sprite):
 class Full_hole(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.width = WIDTH/6
-        self.height = HEIGHT/6
-        self.empty = pygame.transform.scale(empty_hole_img, (self.width, self.height))
-        self.image = pygame.transform.scale(full_hole_img, (self.width, self.height))
+        self.size = 170
+        self.empty = pygame.transform.scale(empty_hole_img, (self.size, self.size))
+        self.image = pygame.transform.scale(full_hole_img, (self.size, self.size))
         self.image.set_colorkey(BLACK)
         self.rect = self.image.get_rect()
         self.radius = int(self.rect.width * 0.85 / 2)
-        space_between_holes = (WIDTH - (self.width * 4)) / 5 
+        space_between_holes = (WIDTH - (self.size * 4)) / 5
         global hole_1_x, hole_2_x, hole_3_x, hole_4_x
         hole_1_x = space_between_holes
-        hole_2_x = hole_1_x + self.width + space_between_holes
-        hole_3_x = hole_2_x + self.width + space_between_holes
-        hole_4_x = hole_3_x + self.width + space_between_holes
+        hole_2_x = hole_1_x + self.size + space_between_holes
+        hole_3_x = hole_2_x + self.size + space_between_holes
+        hole_4_x = hole_3_x + self.size + space_between_holes
         self.rect.x = random.choice([hole_1_x, hole_2_x, hole_3_x, hole_4_x])
         global chosen
         chosen = self.rect.x
@@ -154,7 +153,7 @@ class Full_hole(pygame.sprite.Sprite):
 class Radish(pygame.sprite.Sprite):
     def __init__(self, center):
         pygame.sprite.Sprite.__init__(self)
-        self.size = 150
+        self.size = 65
         self.image = pygame.transform.scale(radish_img, (self.size, self.size))
         self.image.set_colorkey(BLACK)
         self.rect = self.image.get_rect()
@@ -233,7 +232,6 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-            # root.mainloop()
     # 更新遊戲
     all_sprites.update()
     if not game_over:
