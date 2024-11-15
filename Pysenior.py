@@ -25,7 +25,7 @@ from cryptography.hazmat.primitives import padding
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from Utils import update_game_data, grab_game_data
+from Utils import update_game_data, grab_game_data, update_upload_data, grab_upload_data
 from Utils import update_verify_data, grab_verify_data, grab_verify_data_int
 from Utils import get_mac, hash_mac, hash_str, generate_key, hash_x, hash_key 
 from Utils import encrypt, encrypt_csv, decrypt, decrypt_csv
@@ -526,7 +526,7 @@ def main():
 
             #記錄欄位
             if self.game_data["name"] != "虛擬筆" :
-                game_record = tk.Label(self, text="最高紀錄 : " + str(grab_game_data(int(self.game_data["record_code"]))), bg="lightsteelblue", fg="blue", font=("Helvetica", 40, "bold"), width=15)
+                game_record = tk.Label(self, text="最高紀錄 : " + str(grab_upload_data(int(self.game_data["record_code"]))), bg="lightsteelblue", fg="blue", font=("Helvetica", 40, "bold"), width=15)
                 game_record.grid(row=0, column=2, columnspan=2, pady=5)
 
             # 游戏场景图片
@@ -609,15 +609,15 @@ def main():
     pg_manager = PGManager(root)
 
     # 頁面切換，顯示初始頁面
-    # decrypt_csv('Data/verify.csv', ENCRYPTKEY)
-    # if grab_verify_data_int(4) == 0:
-    #     if grab_verify_data(3) == "null":
-    #         pg_manager.show_page(FirstLoginPage)
-    #     else:
-    #         pg_manager.show_page(InitPage)
-    # else:
-    #         pg_manager.show_page(LoginPage)
-    pg_manager.show_page(GameMenuPage)
+    decrypt_csv('Data/verify.csv', ENCRYPTKEY)
+    if grab_verify_data_int(4) == 0:
+        if grab_verify_data(3) == "null":
+            pg_manager.show_page(FirstLoginPage)
+        else:
+            pg_manager.show_page(InitPage)
+    else:
+            pg_manager.show_page(LoginPage)
+    # pg_manager.show_page(GameMenuPage)
     # 進入主循環
     root.mainloop()
 

@@ -6,17 +6,17 @@ import os                        # 用於文件操作（例如讀取/保存遊�
 import sys
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from Utils import update_game_data, grab_game_data
+from Utils import update_game_data, grab_game_data, update_upload_data, grab_upload_data
 from Utils import update_verify_data, grab_verify_data, grab_verify_data_int
 from Utils import get_mac, hash_mac, hash_str, generate_key, hash_x, hash_key 
 from Utils import encrypt, encrypt_csv, decrypt, decrypt_csv
 
 ### 參數調整 ###
 # 金幣速度
-dropspeed = grab_game_data(2)
+dropspeed = grab_game_data(4)
 
 # 金幣數量
-quantity = grab_game_data(3)
+quantity = grab_game_data(5)
 
 # 基礎參數設定
 FPS = 60
@@ -304,11 +304,11 @@ while running:
         player.score += 3
 
     # DataSave
-    if grab_game_data(13) == 0:
-        update_game_data(13, player.score)
+    if grab_upload_data(3) == 0:
+        update_upload_data(3, player.score)
     else:
-        if grab_game_data(13) < player.score:
-            update_game_data(13, player.score)
+        if grab_upload_data(3) < player.score:
+            update_upload_data(3, player.score)
 
     # 畫面顯示
     screen.fill(BLACK)

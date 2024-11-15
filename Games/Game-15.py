@@ -6,7 +6,7 @@ import os                        # 用於文件操作（例如讀取/保存遊�
 import sys
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from Utils import update_game_data, grab_game_data
+from Utils import update_game_data, grab_game_data, update_upload_data, grab_upload_data
 from Utils import update_verify_data, grab_verify_data, grab_verify_data_int
 from Utils import get_mac, hash_mac, hash_str, generate_key, hash_x, hash_key 
 from Utils import encrypt, encrypt_csv, decrypt, decrypt_csv
@@ -459,11 +459,11 @@ while running:
             chosen = random.choice([0, 1, 2, 3, 4, 5, 6, 7])
 
     # DataSave
-    if grab_game_data(26) == 0:
-        update_game_data(26, score)
+    if grab_upload_data(16) == 0:
+        update_upload_data(16, score)
     else:
-        if grab_game_data(26) < score:
-            update_game_data(26, score)
+        if grab_upload_data(16) < score:
+            update_upload_data(16, score)
 
     # 畫面顯示
     screen.fill(BLACK)

@@ -6,7 +6,7 @@ import os                        # 用於文件操作（例如讀取/保存遊�
 import sys
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from Utils import update_game_data, grab_game_data
+from Utils import update_game_data, grab_game_data, update_upload_data, grab_upload_data
 from Utils import update_verify_data, grab_verify_data, grab_verify_data_int
 from Utils import get_mac, hash_mac, hash_str, generate_key, hash_x, hash_key 
 from Utils import encrypt, encrypt_csv, decrypt, decrypt_csv
@@ -247,11 +247,11 @@ while running:
         new_full_hole()
 
     # DataSave
-    if grab_game_data(14) == 0:
-        update_game_data(14, shovel.score)
+    if grab_upload_data(4) == 0:
+        update_upload_data(4, shovel.score)
     else:
-        if grab_game_data(14) < shovel.score:
-            update_game_data(14, shovel.score)
+        if grab_upload_data(4) < shovel.score:
+            update_upload_data(4, shovel.score)
 
     # 畫面顯示
     screen.fill(BLACK)

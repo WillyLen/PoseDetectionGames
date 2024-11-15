@@ -32,6 +32,27 @@ RELOADING = False
 accountname="001"
 
 #更新及讀取csv檔參數
+def update_upload_data(new_value_index, new_value):
+    rows = []
+    with open('Data/upload.csv', 'r', newline='') as csvfile:
+        reader = csv.reader(csvfile)
+        for row in reader:
+            if row[1] == accountname:
+                row[new_value_index] = new_value  # 更新指定列的值
+            rows.append(row)
+
+    with open('Data/upload.csv', 'w', newline='') as csvfile:
+        writer = csv.writer(csvfile)
+        writer.writerows(rows)
+
+def grab_upload_data(value_index):
+    row = []
+    with open('Data/upload.csv', 'r', newline='') as csvfile:
+        reader = csv.reader(csvfile)
+        for row in reader:
+            if row[1] == accountname:
+                return int(row[value_index])
+            
 def update_game_data(new_value_index, new_value):
     rows = []
     with open('Data/game.csv', 'r', newline='') as csvfile:

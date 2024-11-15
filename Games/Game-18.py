@@ -13,7 +13,7 @@ import random
 import cv2
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from Utils import update_game_data, grab_game_data
+from Utils import update_game_data, grab_game_data, update_upload_data, grab_upload_data
 from Utils import update_verify_data, grab_verify_data, grab_verify_data_int
 from Utils import get_mac, hash_mac, hash_str, generate_key, hash_x, hash_key 
 from Utils import encrypt, encrypt_csv, decrypt, decrypt_csv
@@ -85,11 +85,11 @@ class SnakeGameClass:
                 self.score += 1
 
                 # 数据保存
-                if grab_game_data(30) == 0:
-                    update_game_data(30, self.score)
+                if grab_upload_data(19) == 0:
+                    update_upload_data(19, self.score)
                 else:
-                    if grab_game_data(30) < self.score:
-                        update_game_data(30, self.score)
+                    if grab_upload_data(19) < self.score:
+                        update_upload_data(19, self.score)
 
             # 绘制蛇
             if self.points:

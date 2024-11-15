@@ -14,7 +14,7 @@ import cv2
 import time
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from Utils import update_game_data, grab_game_data
+from Utils import update_game_data, grab_game_data, update_upload_data, grab_upload_data
 from Utils import update_verify_data, grab_verify_data, grab_verify_data_int
 from Utils import get_mac, hash_mac, hash_str, generate_key, hash_x, hash_key 
 from Utils import encrypt, encrypt_csv, decrypt, decrypt_csv
@@ -173,8 +173,8 @@ with mp_face_mesh.FaceMesh(
             game_clock = time.time()
 
             # DataSave
-            if grab_game_data(31) == 0:
-                update_game_data(31, score)
+            if grab_upload_data(20) == 0:
+                update_upload_data(20, score)
             else:
-                if grab_game_data(31) < score:
-                    update_game_data(31, score)
+                if grab_upload_data(20) < score:
+                    update_upload_data(20, score)
