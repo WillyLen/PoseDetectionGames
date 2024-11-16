@@ -16,12 +16,13 @@ csv_file_path = 'Data/upload.csv'
 with open(csv_file_path, newline='', encoding='utf-8') as csvfile:
     reader = csv.DictReader(csvfile)
     for row in reader:
+        doc_id = row['id']
         # 将数据写入 Firestore 的 'game_data' 集合
-        db.collection('game_record').add(row)
+        db.collection(row['據點']).document(doc_id).set(row)
 
 print("Data uploaded successfully!")
 
 # 从 Firestore 中读取数据
-docs = db.collection('game_record').stream()
-for doc in docs:
-    print(f'{doc.id} => {doc.to_dict()}')
+# docs = db.collection('game_record').stream()
+# for doc in docs:
+#     print(f'{doc.id} => {doc.to_dict()}')

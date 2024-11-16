@@ -29,7 +29,15 @@ MAGIC_HEADER = b'ENCRYPTEDFILE'
 global RELOADING
 RELOADING = False
 
-accountname="001"
+def get_accountname():
+    try:
+        with open('Data/accountname.txt', 'r') as file:
+            return file.read()  # 讀取 txt 檔案中的 accountname
+    except FileNotFoundError:
+        print("accountname.txt 不存在，請確認是否已登入")
+        return None
+    
+
 
 #更新及讀取csv檔參數
 def update_upload_data(new_value_index, new_value):
@@ -37,7 +45,7 @@ def update_upload_data(new_value_index, new_value):
     with open('Data/upload.csv', 'r', newline='') as csvfile:
         reader = csv.reader(csvfile)
         for row in reader:
-            if row[1] == accountname:
+            if row[1] == get_accountname():
                 row[new_value_index] = new_value  # 更新指定列的值
             rows.append(row)
 
@@ -45,12 +53,20 @@ def update_upload_data(new_value_index, new_value):
         writer = csv.writer(csvfile)
         writer.writerows(rows)
 
+def grab_upload_data_str(value_index):
+    row = []
+    with open('Data/upload.csv', 'r', newline='') as csvfile:
+        reader = csv.reader(csvfile)
+        for row in reader:
+            if row[1] == get_accountname():
+                return row[value_index]
+
 def grab_upload_data(value_index):
     row = []
     with open('Data/upload.csv', 'r', newline='') as csvfile:
         reader = csv.reader(csvfile)
         for row in reader:
-            if row[1] == accountname:
+            if row[1] == get_accountname():
                 return int(row[value_index])
             
 def update_game_data(new_value_index, new_value):
@@ -58,7 +74,7 @@ def update_game_data(new_value_index, new_value):
     with open('Data/game.csv', 'r', newline='') as csvfile:
         reader = csv.reader(csvfile)
         for row in reader:
-            if row[0] == accountname:
+            if row[0] == get_accountname():
                 row[new_value_index] = new_value  # 更新指定列的值
             rows.append(row)
 
@@ -71,7 +87,7 @@ def grab_game_data(value_index):
     with open('Data/game.csv', 'r', newline='') as csvfile:
         reader = csv.reader(csvfile)
         for row in reader:
-            if row[0] == accountname:
+            if row[0] == get_accountname():
                 return int(row[value_index])
             
 #更新及讀取認證參數

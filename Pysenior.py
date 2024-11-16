@@ -25,7 +25,7 @@ from cryptography.hazmat.primitives import padding
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from Utils import update_game_data, grab_game_data, update_upload_data, grab_upload_data
+from Utils import update_game_data, grab_game_data, update_upload_data, grab_upload_data, grab_upload_data_str
 from Utils import update_verify_data, grab_verify_data, grab_verify_data_int
 from Utils import get_mac, hash_mac, hash_str, generate_key, hash_x, hash_key 
 from Utils import encrypt, encrypt_csv, decrypt, decrypt_csv
@@ -107,6 +107,7 @@ def main():
             # 帳號標籤
             self.label_2 = tk.Label(self, text='Key： ', font=('Arial', 18))
             self.label_4 = tk.Label(self, text='Email： ', font=('Arial', 18))
+            self.label_5 = tk.Label(self, text='據點名稱 ', font=('Arial', 18))
 
 
             # 輸入格
@@ -114,6 +115,8 @@ def main():
             self.entry1 = tk.Entry(self, textvariable=self.StringVar1, width=50, bg="white", fg="black")
             self.StringVar2 = tk.StringVar()
             self.entry2 = tk.Entry(self, textvariable=self.StringVar2, width=50, bg="white", fg="black")
+            self.StringVar3 = tk.StringVar()
+            self.entry3 = tk.Entry(self, textvariable=self.StringVar3, width=50, bg="white", fg="black")
 
             # 背景
             self.image_path_bg = "Resource/img/普通/background.jpg"
@@ -134,8 +137,10 @@ def main():
             self.entry1.grid(row=2, column=0, sticky="e", padx=10, pady=5)
             self.label_4.grid(row=3, column=0, sticky="w", padx=10, pady=5)
             self.entry2.grid(row=3, column=0, sticky="e", padx=10, pady=5)
-            self.login_button.grid(row=4, column=0, sticky="n", padx=10, pady=5)
-            self.label_3.grid(row=5, column=0, sticky="sw", padx=10, pady=5)
+            self.label_5.grid(row=4, column=0, sticky="w", padx=10, pady=5)
+            self.entry3.grid(row=4, column=0, sticky="e", padx=10, pady=5)
+            self.login_button.grid(row=5, column=0, sticky="n", padx=10, pady=5)
+            self.label_3.grid(row=6, column=0, sticky="sw", padx=10, pady=5)
             
         def comfirm(self):
             global key
@@ -233,6 +238,9 @@ def main():
             # MAC標籤
             self.label_3 = tk.Label(self, text=f"{grab_verify_data(6)}", font=('Arial', 18), bg='purple')
 
+            #據點名稱標籤
+            self.label_4 = tk.Label(self, text=f"{grab_upload_data_str(0)}", font=('Arial', 18), bg='purple')
+
             # 帳號標籤
             self.label_2 = tk.Label(self, text='使用者名稱 ： ', font=('Arial', 18), bg="purple")
 
@@ -261,6 +269,7 @@ def main():
             self.login_button.grid(row=4, column=0, padx=10, pady=5)
             self.reigster_button.grid(row=5, column=0, padx=10, pady=5)
             self.label_3.grid(row=6, column=0, sticky="sw", padx=10, pady=5)
+            self.label_4.grid(row=6, column=0, sticky="se", padx=10, pady=5)
        
         def login(self):
             global RELOADING
@@ -268,6 +277,8 @@ def main():
             if mackey == grab_verify_data(6):
                 global accountname
                 accountname = self.StringVar.get()
+                with open('Data/accountname.txt', 'w') as file:
+                    file.write(accountname)  # 將 accountname 儲存到 txt 檔案
                 with open('Data/game.csv', 'r', newline='') as csvfile:
                     reader = csv.reader(csvfile)
                     for row in reader:
@@ -337,13 +348,19 @@ def main():
 
         def register(self):
             accountname = self.StringVar.get()
+            location = grab_upload_data_str(0)
 
-            new_account = [accountname,0,10,10,10,3,3,3,10,10,5,30,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+            new_account_upload = [location,accountname,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+            new_account_game = [accountname,0,10,10,10,3,3,3,10,10,5,30]
 
             # 將資料追加到 CSV 檔案的最後一行
+            with open('Data/upload.csv','a', newline='') as csvfile:
+                writer = csv.writer(csvfile)
+                writer.writerow(new_account_upload)
+                print("new_account_upload")
             with open('Data/game.csv','a', newline='') as csvfile:
                 writer = csv.writer(csvfile)
-                writer.writerow(new_account)
+                writer.writerow(new_account_game)
                 self.label_2['text'] = '註冊成功！'
 
     class StyleChoosePage(tk.Frame):
@@ -610,14 +627,14 @@ def main():
 
     # 頁面切換，顯示初始頁面
     decrypt_csv('Data/verify.csv', ENCRYPTKEY)
-    if grab_verify_data_int(4) == 0:
-        if grab_verify_data(3) == "null":
-            pg_manager.show_page(FirstLoginPage)
-        else:
-            pg_manager.show_page(InitPage)
-    else:
-            pg_manager.show_page(LoginPage)
-    # pg_manager.show_page(GameMenuPage)
+    # if grab_verify_data_int(4) == 0:
+    #     if grab_verify_data(3) == "null":
+    #         pg_manager.show_page(FirstLoginPage)
+    #     else:
+    #         pg_manager.show_page(InitPage)
+    # else:
+    #         pg_manager.show_page(LoginPage)
+    pg_manager.show_page(LoginPage)
     # 進入主循環
     root.mainloop()
 
