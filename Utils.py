@@ -53,17 +53,9 @@ def update_upload_data(new_value_index, new_value):
         writer = csv.writer(csvfile)
         writer.writerows(rows)
 
-def grab_upload_data_str(value_index):
-    row = []
-    with open('Data/upload.csv', 'r', newline='') as csvfile:
-        reader = csv.reader(csvfile)
-        for row in reader:
-            if row[1] == get_accountname():
-                return row[value_index]
-
 def grab_upload_data(value_index):
     row = []
-    with open('Data/upload.csv', 'r', newline='') as csvfile:
+    with open('Data/upload.csv', 'r', newline='', encoding='utf-8') as csvfile:
         reader = csv.reader(csvfile)
         for row in reader:
             if row[1] == get_accountname():

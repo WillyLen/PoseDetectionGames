@@ -25,7 +25,7 @@ from cryptography.hazmat.primitives import padding
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from Utils import update_game_data, grab_game_data, update_upload_data, grab_upload_data, grab_upload_data_str
+from Utils import update_game_data, grab_game_data, update_upload_data, grab_upload_data
 from Utils import update_verify_data, grab_verify_data, grab_verify_data_int
 from Utils import get_mac, hash_mac, hash_str, generate_key, hash_x, hash_key 
 from Utils import encrypt, encrypt_csv, decrypt, decrypt_csv
@@ -44,25 +44,25 @@ PageData = [
         ["Game_4_1.png", "Game_4_2.png", "Game_4_3.png", "Game_4_4.png", "Game_4_5.png", "太空戰", "桌球", "貪食蛇", "跑酷鳥", "虛擬筆"]
     ]
 games = [
-    {"code": "1", "record_code": "12", "name": "躲隕石", "scene_image": "Game_1_1.jpg", "intro_image": "Act_1_1.png", "intro_text": "移動身體來操控人物躲避物品，時間過越久分數越高"},
-    {"code": "2", "record_code": "13", "name": "接金幣", "scene_image": "Game_1_2.jpg", "intro_image": "Act_1_2.png", "intro_text": "移動身體來操控人物接金幣，時間到接越多顆分數越高"},
-    {"code": "3", "record_code": "14", "name": "挖蘿蔔", "scene_image": "Game_1_3.jpg", "intro_image": "Act_1_3.png", "intro_text": "身體來回蹲下操控鏟子挖出蘿蔔，一個一分"},
-    {"code": "4", "record_code": "15", "name": "追趕跳碰", "scene_image": "Game_1_4.jpg", "intro_image": "Act_1_4.png", "intro_text": "雙腳保持頻率抬高，速度加快，反之減速，被狼追到就會結束遊戲"},
-    {"code": "5", "record_code": "16", "name": "抓蝴蝶", "scene_image": "Game_1_5.jpg", "intro_image": "Act_1_5.png", "intro_text": "雙手即網子，用兩個網子捕捉蝴蝶"},
-    {"code": "6", "record_code": "17", "name": "鬆土", "scene_image": "Game_2_1.jpg", "intro_image": "Act_2_1.png", "intro_text": "雙手重複舉高放下，時限內去除越多稻草分數越高"},
-    {"code": "7", "record_code": "18", "name": "踩水車", "scene_image": "Game_2_2.jpg", "intro_image": "Act_2_2.png", "intro_text": "當畫面出現左腳時抬左腳，反之右腳，每次踏步農田都會產生變化"},
-    {"code": "8", "record_code": "19", "name": "施肥", "scene_image": "Game_2_3.jpg", "intro_image": "Act_2_3.png", "intro_text": "雙手向上舉起，每做一次就會長出一片稻穗"},
-    {"code": "9", "record_code": "20", "name": "收割", "scene_image": "Game_2_4.jpg", "intro_image": "Act_2_4.png", "intro_text": "雙手向上舉起，每做一次就會割下一片稻穗"},
-    {"code": "10", "record_code": "21", "name": "椿米", "scene_image": "Game_2_5.jpg", "intro_image": "Act_2_5.png", "intro_text": "雙腳張開與肩同寬，將腿部抬高，再放下"},
-    {"code": "11", "record_code": "22", "name": "刺氣球", "scene_image": "Game_3_1.jpg", "intro_image": "Act_3_1.png", "intro_text": "當氣球出現於腳下時，可舉腳踩踏，若身體過於傾斜，人物將會跌倒"},
-    {"code": "12", "record_code": "23", "name": "接雞蛋", "scene_image": "Game_3_2.jpg", "intro_image": "Act_3_2.png", "intro_text": "移動骨盆來控制接雞蛋的位置，一個一分"},
-    {"code": "13", "record_code": "24", "name": "接果子", "scene_image": "Game_3_3.jpg", "intro_image": "Act_3_3.png", "intro_text": "身體呈側身，將手臂伸往前，控制籃子接果實，需再回到綠點，才能出現下一個"},
-    {"code": "14", "record_code": "25", "name": "踩氣球", "scene_image": "Game_3_4.jpg", "intro_image": "Act_3_4.png", "intro_text": "當氣球出現於腳下時，可舉腳踩踏，若身體過於傾斜，人物將會跌倒"},
-    {"code": "15", "record_code": "26", "name": "跳舞機", "scene_image": "Game_3_5.jpg", "intro_image": "Act_3_5.png", "intro_text": "用雙手伸向紅箭頭之位置後，回到中心綠點，才會有下一個紅箭頭出現"},
-    {"code": "16", "record_code": "27", "name": "太空戰", "scene_image": "Game_4_1.jpg", "intro_image": "Act_4_1.png", "intro_text": "身體控制飛船左右，舉手發射子彈"},
-    {"code": "17", "record_code": "28", "name": "桌球", "scene_image": "Game_4_2.jpg", "intro_image": "Act_4_2.png", "intro_text": "手掌控制擋板上下，球進結束遊戲，按下空白鍵結束"},
-    {"code": "18", "record_code": "29", "name": "貪食蛇", "scene_image": "Game_4_3.jpg", "intro_image": "Act_4_3.png", "intro_text": "手掌控制擋板上下，球進結束遊戲，按下空白鍵結束"},
-    {"code": "19", "record_code": "30", "name": "跑酷鳥", "scene_image": "Game_4_4.jpg", "intro_image": "Act_4_4.png", "intro_text": "頭部控制飛鳥上下移動，每過一個階段速度將會提升，碰到水管遊戲結束"},
+    {"code": "1", "record_code": "2", "name": "躲隕石", "scene_image": "Game_1_1.jpg", "intro_image": "Act_1_1.png", "intro_text": "移動身體來操控人物躲避物品，時間過越久分數越高"},
+    {"code": "2", "record_code": "3", "name": "接金幣", "scene_image": "Game_1_2.jpg", "intro_image": "Act_1_2.png", "intro_text": "移動身體來操控人物接金幣，時間到接越多顆分數越高"},
+    {"code": "3", "record_code": "4", "name": "挖蘿蔔", "scene_image": "Game_1_3.jpg", "intro_image": "Act_1_3.png", "intro_text": "身體來回蹲下操控鏟子挖出蘿蔔，一個一分"},
+    {"code": "4", "record_code": "5", "name": "追趕跳碰", "scene_image": "Game_1_4.jpg", "intro_image": "Act_1_4.png", "intro_text": "雙腳保持頻率抬高，速度加快，反之減速，被狼追到就會結束遊戲"},
+    {"code": "5", "record_code": "6", "name": "抓蝴蝶", "scene_image": "Game_1_5.jpg", "intro_image": "Act_1_5.png", "intro_text": "雙手即網子，用兩個網子捕捉蝴蝶"},
+    {"code": "6", "record_code": "7", "name": "鬆土", "scene_image": "Game_2_1.jpg", "intro_image": "Act_2_1.png", "intro_text": "雙手重複舉高放下，時限內去除越多稻草分數越高"},
+    {"code": "7", "record_code": "8", "name": "踩水車", "scene_image": "Game_2_2.jpg", "intro_image": "Act_2_2.png", "intro_text": "當畫面出現左腳時抬左腳，反之右腳，每次踏步農田都會產生變化"},
+    {"code": "8", "record_code": "9", "name": "施肥", "scene_image": "Game_2_3.jpg", "intro_image": "Act_2_3.png", "intro_text": "雙手向上舉起，每做一次就會長出一片稻穗"},
+    {"code": "9", "record_code": "10", "name": "收割", "scene_image": "Game_2_4.jpg", "intro_image": "Act_2_4.png", "intro_text": "雙手向上舉起，每做一次就會割下一片稻穗"},
+    {"code": "10", "record_code": "11", "name": "椿米", "scene_image": "Game_2_5.jpg", "intro_image": "Act_2_5.png", "intro_text": "雙腳張開與肩同寬，將腿部抬高，再放下"},
+    {"code": "11", "record_code": "12", "name": "刺氣球", "scene_image": "Game_3_1.jpg", "intro_image": "Act_3_1.png", "intro_text": "當氣球出現於腳下時，可舉腳踩踏，若身體過於傾斜，人物將會跌倒"},
+    {"code": "12", "record_code": "13", "name": "接雞蛋", "scene_image": "Game_3_2.jpg", "intro_image": "Act_3_2.png", "intro_text": "移動骨盆來控制接雞蛋的位置，一個一分"},
+    {"code": "13", "record_code": "14", "name": "接果子", "scene_image": "Game_3_3.jpg", "intro_image": "Act_3_3.png", "intro_text": "身體呈側身，將手臂伸往前，控制籃子接果實，需再回到綠點，才能出現下一個"},
+    {"code": "14", "record_code": "15", "name": "踩氣球", "scene_image": "Game_3_4.jpg", "intro_image": "Act_3_4.png", "intro_text": "當氣球出現於腳下時，可舉腳踩踏，若身體過於傾斜，人物將會跌倒"},
+    {"code": "15", "record_code": "16", "name": "跳舞機", "scene_image": "Game_3_5.jpg", "intro_image": "Act_3_5.png", "intro_text": "用雙手伸向紅箭頭之位置後，回到中心綠點，才會有下一個紅箭頭出現"},
+    {"code": "16", "record_code": "17", "name": "太空戰", "scene_image": "Game_4_1.jpg", "intro_image": "Act_4_1.png", "intro_text": "身體控制飛船左右，舉手發射子彈"},
+    {"code": "17", "record_code": "18", "name": "桌球", "scene_image": "Game_4_2.jpg", "intro_image": "Act_4_2.png", "intro_text": "手掌控制擋板上下，球進結束遊戲，按下空白鍵結束"},
+    {"code": "18", "record_code": "19", "name": "貪食蛇", "scene_image": "Game_4_3.jpg", "intro_image": "Act_4_3.png", "intro_text": "手掌控制擋板上下，球進結束遊戲，按下空白鍵結束"},
+    {"code": "19", "record_code": "20", "name": "跑酷鳥", "scene_image": "Game_4_4.jpg", "intro_image": "Act_4_4.png", "intro_text": "頭部控制飛鳥上下移動，每過一個階段速度將會提升，碰到水管遊戲結束"},
     {"code": "20", "name": "虛擬筆", "scene_image": "Game_4_5.jpg", "intro_image": "Act_4_5.png", "intro_text": "拿出鮮艷顏色的筆，就能在畫面上作畫"},
 ]
 
@@ -146,11 +146,13 @@ def main():
             global key
             key = self.StringVar1.get()
             email = self.StringVar2.get()
+            location = self.StringVar3.get()
             print(key[0:9] + "***" + key[9:12] + "***" + key[12:])
             update_verify_data(0,key[9:12])
             update_verify_data(1,key[0:9])
             update_verify_data(5,email)
             update_verify_data(6,hash_mac(get_mac()))
+            update_verify_data(7,location)
             print(hash_key(str((grab_verify_data_int(2) + 1))))
             if key[12:] == hash_key(str((grab_verify_data_int(2) + 1))):
                 update_verify_data(2,str((grab_verify_data_int(2) + 1)))
@@ -239,7 +241,7 @@ def main():
             self.label_3 = tk.Label(self, text=f"{grab_verify_data(6)}", font=('Arial', 18), bg='purple')
 
             #據點名稱標籤
-            self.label_4 = tk.Label(self, text=f"{grab_upload_data_str(0)}", font=('Arial', 18), bg='purple')
+            self.label_4 = tk.Label(self, text=f"{grab_verify_data(7)}", font=('Arial', 18), bg='purple')
 
             # 帳號標籤
             self.label_2 = tk.Label(self, text='使用者名稱 ： ', font=('Arial', 18), bg="purple")
@@ -348,7 +350,7 @@ def main():
 
         def register(self):
             accountname = self.StringVar.get()
-            location = grab_upload_data_str(0)
+            location = grab_verify_data(7)
 
             new_account_upload = [location,accountname,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
             new_account_game = [accountname,0,10,10,10,3,3,3,10,10,5,30]
@@ -538,12 +540,12 @@ def main():
             self.master.configure(bg="lightsteelblue")
 
             # 游戏名称
-            game_name_label = tk.Label(self, text=self.game_data["name"], bg="lightsteelblue", fg="blue", font=("Helvetica", 40, "bold"), width=10)
+            game_name_label = tk.Label(self, text=self.game_data['name'], bg="lightsteelblue", fg="blue", font=("Helvetica", 40, "bold"), width=10)
             game_name_label.grid(row=0, column=0, columnspan=2, pady=5)
 
             #記錄欄位
             if self.game_data["name"] != "虛擬筆" :
-                game_record = tk.Label(self, text="最高紀錄 : " + str(grab_upload_data(int(self.game_data["record_code"]))), bg="lightsteelblue", fg="blue", font=("Helvetica", 40, "bold"), width=15)
+                game_record = tk.Label(self, text="最高紀錄 : " + str(grab_upload_data(int(self.game_data['record_code']))), bg="lightsteelblue", fg="blue", font=("Helvetica", 40, "bold"), width=15)
                 game_record.grid(row=0, column=2, columnspan=2, pady=5)
 
             # 游戏场景图片
@@ -576,20 +578,20 @@ def main():
 
         def detect(self):
             if self.game_data["code"] in ["1", "2", "3", "16"]:
-                subprocess.Popen(["python3", "Detect.py", self.game_data["code"], "11", "12"])  # 左肩: 11 + 右肩: 12
+                subprocess.Popen(["python3", "Detect.py", self.game_data['code'], "11", "12"])  # 左肩: 11 + 右肩: 12
             elif self.game_data["code"] in ["4", "7", "10", "14"]:
-                subprocess.Popen(["python3", "Detect.py", self.game_data["code"], "25", "26"])  # 左膝: 25 + 右膝: 26
+                subprocess.Popen(["python3", "Detect.py", self.game_data['code'], "25", "26"])  # 左膝: 25 + 右膝: 26
             elif self.game_data["code"] in ["5", "6", "8", "9", "11", "13", "15", "17"]:
-                subprocess.Popen(["python3", "Detect.py", self.game_data["code"], "17", "18"])  # 左腕: 17 + 右腕: 18
+                subprocess.Popen(["python3", "Detect.py", self.game_data['code'], "17", "18"])  # 左腕: 17 + 右腕: 18
             elif self.game_data["code"] == "12":
-                subprocess.Popen(["python3", "Detect.py", self.game_data["code"], "23", "24"])  # 左臀: 23 + 右臀: 24
+                subprocess.Popen(["python3", "Detect.py", self.game_data['code'], "23", "24"])  # 左臀: 23 + 右臀: 24
             elif self.game_data["code"] == "18":
-                subprocess.Popen(["python3", "Detect.py", self.game_data["code"], "21", "22"])  # 左拇指: 21 + 右拇指: 22
+                subprocess.Popen(["python3", "Detect.py", self.game_data['code'], "21", "22"])  # 左拇指: 21 + 右拇指: 22
             elif self.game_data["code"] == "19":
-                subprocess.Popen(["python3", "Detect.py", self.game_data["code"], "1", "4"])   # 左眼: 1 + 右眼: 4
+                subprocess.Popen(["python3", "Detect.py", self.game_data['code'], "1", "4"])   # 左眼: 1 + 右眼: 4
         
         def start(self):
-            subprocess.Popen(["python3", f"Games/Game-{self.game_data["code"]}.py"])
+            subprocess.Popen(["python3", f"Games/Game-{self.game_data['code']}.py"])
 
     class IntroPage(tk.Frame):
         def __init__(self, master, game_data):
@@ -627,14 +629,14 @@ def main():
 
     # 頁面切換，顯示初始頁面
     decrypt_csv('Data/verify.csv', ENCRYPTKEY)
-    # if grab_verify_data_int(4) == 0:
-    #     if grab_verify_data(3) == "null":
-    #         pg_manager.show_page(FirstLoginPage)
-    #     else:
-    #         pg_manager.show_page(InitPage)
-    # else:
-    #         pg_manager.show_page(LoginPage)
-    pg_manager.show_page(LoginPage)
+    if grab_verify_data_int(4) == 0:
+        if grab_verify_data(3) == "null":
+            pg_manager.show_page(FirstLoginPage)
+        else:
+            pg_manager.show_page(InitPage)
+    else:
+            pg_manager.show_page(LoginPage)
+    # pg_manager.show_page(LoginPage)
     # 進入主循環
     root.mainloop()
 
