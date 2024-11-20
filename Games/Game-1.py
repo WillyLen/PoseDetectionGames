@@ -253,10 +253,10 @@ while running:
 
     # DataSave
     if grab_upload_data(2) == 0:
-        update_upload_data(2, countdown)
+        update_upload_data(2, 60-countdown)
     else:
-        if grab_upload_data(2) > countdown:
-            update_upload_data(2, countdown)
+        if grab_upload_data(2) < 60-countdown:
+            update_upload_data(2, 60-countdown)
 
     # 畫面顯示
     screen.fill(BLACK)

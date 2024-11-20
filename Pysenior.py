@@ -29,6 +29,7 @@ from Utils import update_game_data, grab_game_data, update_upload_data, grab_upl
 from Utils import update_verify_data, grab_verify_data, grab_verify_data_int
 from Utils import get_mac, hash_mac, hash_str, generate_key, hash_x, hash_key 
 from Utils import encrypt, encrypt_csv, decrypt, decrypt_csv
+from Upload import upload_data
 
 ENCRYPTKEY = "032118800"
 
@@ -591,7 +592,9 @@ def main():
                 subprocess.Popen(["python3", "Detect.py", self.game_data['code'], "1", "4"])   # 左眼: 1 + 右眼: 4
         
         def start(self):
-            subprocess.Popen(["python3", f"Games/Game-{self.game_data['code']}.py"])
+            game_process = subprocess.Popen(["python3", f"Games/Game-{self.game_data['code']}.py"])
+            game_process.wait()  # 等待游戏结束
+            upload_data()
 
     class IntroPage(tk.Frame):
         def __init__(self, master, game_data):
