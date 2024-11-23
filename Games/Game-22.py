@@ -1,124 +1,114 @@
 import pygame
+import random
 import sys
 
-# 初始化 pygame
+# 初始化 Pygame
 pygame.init()
 
-# 設定螢幕尺寸與顏色
-SCREEN_WIDTH, SCREEN_HEIGHT = 600, 800
-screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pygame.display.set_caption("水平射針遊戲")
-WHITE = (255, 255, 255)
-BLACK = (0, 0, 0)
-RED = (255, 0, 0)
-YELLOW = (255, 255, 0)
-BLUE = (0, 0, 255)
-GREEN = (0, 255, 0)
+# 遊戲窗口尺寸
+screen_width = 400
+screen_height = 600
+screen = pygame.display.set_mode((screen_width, screen_height))
+pygame.display.set_caption("木頭針插遊戲")
 
-# FPS 設定
+# 顏色定義
+white = (255, 255, 255)
+black = (0, 0, 0)
+red = (255, 0, 0)
+blue = (0, 0, 255)
+green = (0, 255, 0)
+
+# 遊戲變數
 clock = pygame.time.Clock()
-FPS = 60
+fps = 60
 
-# 遊戲參數
+# 木頭
+wood_width = 30
+wood_height = screen_height * 1.5
+wood_pos = [50,  - wood_height / 2]  # 固定在左側
+wood_move_down = screen_height / 10  # 每次下降的距離
+
+# 球
 ball_radius = 20
-ball_speed = 5  # 球的初始垂直速度
-ball_acceleration = -0.1  # 球反彈後速度的遞減量
-wood_width = 50
-wood_height = SCREEN_HEIGHT
-wood_move_down = 20  # 木頭下降距離
-max_score = 10  # 勝利條件
+ball_pos = [screen_width / 2, screen_height / 4]
+ball_speed = random.uniform(2, 4)  # 初始速度
+
+# 針
+needle_length = screen_width / 2
+needles = []  # 保存針的資料 [x, y, 顏色, 是否已插入]
 
 # 遊戲狀態變數
-ball_pos = [SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2]  # 球的初始位置
-wood_pos = [SCREEN_WIDTH // 4, -SCREEN_HEIGHT // 4]  # 木頭位置
-needles = []  # 儲存要射出的針[x, y, inserted,speed,color]
-for i in range(10):
-    if i % 3 == 1:
-        needles.append([SCREEN_WIDTH,  SCREEN_HEIGHT * 0.4, False, 5,RED])
-    elif i % 3 == 2:
-        needles.append([SCREEN_WIDTH,  SCREEN_HEIGHT * 0.4, False, 5,BLUE])
-    else:
-        needles.append([SCREEN_WIDTH,  SCREEN_HEIGHT * 0.4, False, 5,GREEN])
-print(needles)
 score = 0
+max_score = 10  # 插入 10 根針即可獲勝
 game_over = False
-ball_direction = 1  # 球的運動方向，1為向下，-1為向上
-current_ball_speed = ball_speed  # 當前球的速度
 
-# 字體
-font = pygame.font.Font(None, 50)
+# 定義顏色循環 (紅、藍、綠)
+needle_colors = ["red", "blue", "green"]
 
-# 功能函式
-def draw_ball():
-    pygame.draw.circle(screen, RED, (int(ball_pos[0]), int(ball_pos[1])), ball_radius)
-
-def draw_wood():
-    pygame.draw.rect(screen, YELLOW, (wood_pos[0], wood_pos[1], wood_width, wood_height))
-
-def draw_needles():
-    for needle in needles:
-        pygame.draw.line(screen, needle[4], (needle[0], needle[1]), (needle[0] + 10, needle[1]), 5)
-
-
-def check_collision(needle):
-    """檢查針是否碰到球"""
-    dist_x = abs(needle[0] - ball_pos[0])
-    dist_y = abs(needle[1] - ball_pos[1])
-    return dist_x ** 2 + dist_y ** 2 <= ball_radius ** 2
-
-# 遊戲迴圈
+# 遊戲主迴圈
 while True:
-    screen.fill(WHITE)
-    
+    screen.fill(white)  # 清屏
+
+    # 檢查遊戲事件
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
-        # if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE and not game_over:
-            # 在右邊新增針，與木頭一半高度對齊
+
+        # 按下空白鍵插入針
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE and not game_over:
+            # 初始化針的資料
+            needle_x = screen_width - 50  # 從右側發射
+            needle_y = screen_height / 2  # 每次針都從中間發射
+            needle_color = needle_colors[len(needles) % len(needle_colors)]  # 循環顏色
+            needles.append([needle_x, needle_y, needle_color, False])  # 加入針並設置未插入
 
     # 更新球的位置
-    if not game_over:
-        ball_pos[1] += current_ball_speed * ball_direction
+    ball_pos[1] += ball_speed
 
-        # 球碰撞範圍邊界時反彈
-        if ball_pos[1] - ball_radius < 0:  # 碰到頂部
-            ball_direction = 1  # 向下
-            current_ball_speed += ball_acceleration  # 減速
-        elif ball_pos[1] + ball_radius >  SCREEN_HEIGHT // 2:  # 碰到底部
-            ball_direction = -1  # 向上
-            current_ball_speed += ball_acceleration  # 減速
+    # 檢查球是否超出邊界，並反彈
+    if ball_pos[1] + ball_radius > screen_height / 2 + wood_move_down or ball_pos[1] - ball_radius < 0:
+        ball_speed *= -1  # 反彈
+        ball_speed += random.uniform(-0.2, 0.2)  # 控制隨機速度變化範圍，避免過小的變化
 
-        # 檢查速度是否足夠繼續反彈，若否則球下墜
-        if current_ball_speed <= 0:
-            ball_direction = 1
-            current_ball_speed = ball_speed  # 重設速度
-
-        # 更新針的位置
-        for needle in needles:
-            needle[0] -= 10  # 從右向左移動
-            if check_collision(needle):  # 如果針碰到球
-                game_over = True
-
-        # 檢查針是否插入木頭
-        for needle in needles:
-            if needle[0] < wood_pos[0] + wood_width:
-                needle_speed = 0
-                wood_pos[1] += wood_move_down  # 木頭下降
+    # 更新針的位置
+    for needle in needles:
+        if not needle[3]:  # 如果針未插入
+            if needle[0] > wood_pos[0] + wood_width + needle_length:  # 如果針未到達木頭
+                needle[0] -= 10  # 水平左移
+            else:  # 當針碰到木頭時
+                needle[0] = wood_pos[0] + wood_width + needle_length  # 確保針固定在木頭右邊緣
+                needle[3] = True  # 標記針已插入
+                # 木頭和所有插入的針一起下降
+                wood_pos[1] += wood_move_down
                 for n in needles:
-                    n[1] += wood_move_down  # 所有針一起下降
-                score += 1
-            if score >= max_score:  # 插入 10 根針即勝利
-                game_over = True
+                    if n[3]:  # 僅讓已插入的針下降
+                        n[1] += wood_move_down
+                score += 1  # 更新分數
+                if score >= max_score:  # 插入 10 根針即勝利
+                    game_over = True
 
-    # 畫面繪製
-    draw_ball()
-    draw_wood()
+    # 繪製木頭
+    pygame.draw.rect(screen, black, (wood_pos[0], wood_pos[1], wood_width, wood_height))
 
-    # 分數與遊戲結束
+    # 繪製球
+    pygame.draw.circle(screen, red, (int(ball_pos[0]), int(ball_pos[1])), ball_radius)
+
+    # 繪製針
+    for needle in needles:
+        pygame.draw.line(screen, needle[2], (needle[0], needle[1]), (needle[0] - needle_length, needle[1]), 5)
+
+    # 繪製分數
+    font = pygame.font.Font(None, 36)
+    score_text = font.render(f"Score: {score}", True, black)
+    screen.blit(score_text, (10, 10))
+
+    # 檢查遊戲結束
     if game_over:
-        text = font.render("You Win!" if score >= max_score else "Game Over!", True, RED)
-        screen.blit(text, (SCREEN_WIDTH // 2 - text.get_width() // 2, SCREEN_HEIGHT // 2))
+        end_text = font.render("You Win!", True, black)
+        screen.blit(end_text, (screen_width / 2 - 50, screen_height / 2))
 
+    # 更新屏幕
     pygame.display.flip()
-    clock.tick(FPS)
+    clock.tick(fps)
+
