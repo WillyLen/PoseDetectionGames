@@ -6,8 +6,9 @@ import sys
 pygame.init()
 
 # 遊戲窗口尺寸
-screen_width = 400
-screen_height = 600
+info = pygame.display.Info()
+screen_width = info.current_w
+screen_height = info.current_h
 screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption("木頭針插遊戲")
 
@@ -23,9 +24,9 @@ clock = pygame.time.Clock()
 fps = 60
 
 # 木頭
-wood_width = 30
+wood_width = screen_width / 20
 wood_height = screen_height * 1.5
-wood_pos = [50,  - wood_height / 2]  # 固定在左側
+wood_pos = [screen_width / 6,  - wood_height / 2]  # 固定在左側
 wood_move_down = screen_height / 10  # 每次下降的距離
 
 # 球
@@ -96,7 +97,7 @@ while True:
 
     # 繪製針
     for needle in needles:
-        pygame.draw.line(screen, needle[2], (needle[0], needle[1]), (needle[0] - needle_length, needle[1]), 5)
+        pygame.draw.line(screen, needle[2], (needle[0], needle[1]), (needle[0] - needle_length, needle[1]), 10)
 
     # 繪製分數
     font = pygame.font.Font(None, 36)

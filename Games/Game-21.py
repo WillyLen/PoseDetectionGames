@@ -23,9 +23,13 @@ frame_counter = 0
 
 # 開啟攝影機
 cap = cv2.VideoCapture(0)
+if not cap.isOpened():
+    print("Error: Unable to access the camera.")
+    exit()
 while cap.isOpened():
     ret, frame = cap.read()
     if not ret:
+        print("Error: Frame capture failed.")
         break
 
     # 翻轉影像並轉換為 RGB 格式
@@ -68,7 +72,7 @@ while cap.isOpened():
     cv2.imshow('Blink Detection', frame)
 
     # 按下 'q' 鍵退出
-    if cv2.waitKey(1) & 0xFF == ord(' '):
+    if cv2.waitKey(1) & 0xFF in (ord(' '), ord('q')):
         break
 
 cap.release()
