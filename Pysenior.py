@@ -38,12 +38,12 @@ MAGIC_HEADER = b'ENCRYPTEDFILE'
 global RELOADING
 RELOADING = False
 
-PageData = [
-        ["Game_1_1.jpg", "Game_1_2.jpg", "Game_1_3.jpg", "Game_1_4.jpg", "Game_1_5.jpg", "躲隕石", "接金幣", "挖蘿蔔", "追趕跳碰", "抓蝴蝶"],
-        ["Game_2_1.jpg", "Game_2_2.jpg", "Game_2_3.jpg", "Game_2_4.jpg", "Game_2_5.jpg", "鬆土", "踩水車", "施肥", "收割", "椿米"],
-        ["Game_3_1.jpg", "Game_3_2.jpg", "Game_3_3.jpg", "Game_3_4.jpg", "Game_3_5.jpg", "刺氣球", "接雞蛋", "接果子", "踩氣球", "跳舞機"],
-        ["Game_4_1.png", "Game_4_2.png", "Game_4_3.png", "Game_4_4.png", "Game_4_5.png", "太空戰", "桌球", "貪食蛇", "跑酷鳥", "虛擬筆"]
-    ]
+# PageData = [
+#         ["Game_1_1.jpg", "Game_1_2.jpg", "Game_1_3.jpg", "Game_1_4.jpg", "Game_1_5.jpg", "躲隕石", "接金幣", "挖蘿蔔", "追趕跳碰", "抓蝴蝶"],
+#         ["Game_2_1.jpg", "Game_2_2.jpg", "Game_2_3.jpg", "Game_2_4.jpg", "Game_2_5.jpg", "鬆土", "踩水車", "施肥", "收割", "椿米"],
+#         ["Game_3_1.jpg", "Game_3_2.jpg", "Game_3_3.jpg", "Game_3_4.jpg", "Game_3_5.jpg", "刺氣球", "接雞蛋", "接果子", "踩氣球", "跳舞機"],
+#         ["Game_4_1.png", "Game_4_2.png", "Game_4_3.png", "Game_4_4.png", "Game_4_5.png", "太空戰", "桌球", "貪食蛇", "跑酷鳥", "射飛鏢"]
+#     ]
 games = [
     {"code": "1", "record_code": "2", "name": "躲隕石", "scene_image": "Game_1_1.jpg", "intro_image": "Act_1_1.png", "intro_text": "移動身體來操控人物躲避物品，時間過越久分數越高"},
     {"code": "2", "record_code": "3", "name": "接金幣", "scene_image": "Game_1_2.jpg", "intro_image": "Act_1_2.png", "intro_text": "移動身體來操控人物接金幣，時間到接越多顆分數越高"},
@@ -64,7 +64,7 @@ games = [
     {"code": "17", "record_code": "18", "name": "桌球", "scene_image": "Game_4_2.jpg", "intro_image": "Act_4_2.png", "intro_text": "手掌控制擋板上下，球進結束遊戲，按下空白鍵結束"},
     {"code": "18", "record_code": "19", "name": "貪食蛇", "scene_image": "Game_4_3.jpg", "intro_image": "Act_4_3.png", "intro_text": "手掌控制擋板上下，球進結束遊戲，按下空白鍵結束"},
     {"code": "19", "record_code": "20", "name": "跑酷鳥", "scene_image": "Game_4_4.jpg", "intro_image": "Act_4_4.png", "intro_text": "頭部控制飛鳥上下移動，每過一個階段速度將會提升，碰到水管遊戲結束"},
-    {"code": "20", "name": "虛擬筆", "scene_image": "Game_4_5.jpg", "intro_image": "Act_4_5.png", "intro_text": "拿出鮮艷顏色的筆，就能在畫面上作畫"},
+    {"code": "20", "record_code": "21", "name": "射飛鏢", "scene_image": "Game_4_5.png", "intro_image": "Act_4_5.png", "intro_text": "眨眼就能發射飛鏢，不觸碰到球發射10根就獲勝"},
 ]
 
 
@@ -82,7 +82,7 @@ def main():
 
             # 切换到新的UI页面
             if page_class == GameMenuPage:
-                self.current_page = page_class(self.root, PageData, *args)
+                self.current_page = page_class(self.root, games, *args)
             else:
                 self.current_page = page_class(self.root, *args)
             self.current_page.grid(row=0, column=0, sticky="nsew")
@@ -474,12 +474,12 @@ def main():
             print(RELOADING)
         
     class GameMenuPage(tk.Frame):
-        def __init__(self, parent, all_page_data):
+        def __init__(self, parent, games):
             super().__init__(parent)
             self.parent = parent
-            self.all_page_data = all_page_data
+            self.games = games
             self.buttons = []
-            
+
             # 获取屏幕大小
             self.screen_width = self.parent.winfo_screenwidth()
             self.screen_height = self.parent.winfo_screenheight()
@@ -490,44 +490,41 @@ def main():
 
             self.load_images_and_buttons()
 
-            # 換頁按鈕
-            self.prev_button = tk.Button(self, text="上一頁", font=('Arial', 18), command=self.prev_page)
+            # 换页按钮
+            self.prev_button = tk.Button(self, text="上一页", font=('Arial', 18), command=self.prev_page)
             self.prev_button.grid(row=4, column=2, padx=0, pady=0)
 
         def load_images_and_buttons(self):
-            game_idx = 0  # 游戏索引，用于确定按钮的位置
-            for page_data in self.all_page_data:
-                for idx in range(5):  # 每页5个游戏
-                    image_path = f"Resource/img/普通/{page_data[idx]}"  # 获取图片路径
-                    image = Image.open(image_path)
-                    image = image.resize((self.image_width, self.image_height))  # 根据屏幕大小调整图片
-                    photo = ImageTk.PhotoImage(image)
+            for idx, game in enumerate(self.games):
+                image_path = f"Resource/img/gamelist/{game['scene_image']}"  # 使用 games 数据的图片路径
+                image = Image.open(image_path)
+                image = image.resize((self.image_width, self.image_height))  # 根据屏幕大小调整图片
+                photo = ImageTk.PhotoImage(image)
 
-                    # 获取游戏名称
-                    game_name = page_data[idx + 5]
+                # 获取游戏名称
+                game_name = game['name']
 
-                    # 创建带图片和游戏名称的按钮
-                    button = tk.Button(
-                        self, image=photo, text=game_name, compound=tk.TOP,
-                        command=lambda idx=game_idx: self.loading_page(idx)
-                    )
-                    button.image = photo  # 防止图片被垃圾回收
+                # 创建带图片和游戏名称的按钮
+                button = tk.Button(
+                    self, image=photo, text=game_name, compound=tk.TOP,
+                    command=lambda idx=idx: self.loading_page(idx)
+                )
+                button.image = photo  # 防止图片被垃圾回收
 
-                    # 计算按钮的位置，使每行有5个按钮
-                    row = game_idx // 5
-                    col = game_idx % 5
+                # 计算按钮的位置，使每行有5个按钮
+                row = idx // 5
+                col = idx % 5
 
-                    button.grid(row=row, column=col, padx=0, pady=0)
-                    self.buttons.append(button)
-
-                    game_idx += 1  # 增加游戏索引
-
+                button.grid(row=row, column=col, padx=0, pady=0)
+                self.buttons.append(button)
 
         def prev_page(self):
-            # 切換到第一個UI頁面
+            # 切换到第一个UI页面
             pg_manager.show_page(StyleChoosePage)
+
         def loading_page(self, game_idx):
-            pg_manager.show_page(LoadingPage, games[game_idx])
+            pg_manager.show_page(LoadingPage, self.games[game_idx])
+
 
     class LoadingPage(tk.Frame):
         def __init__(self, master, game_data):
@@ -545,9 +542,8 @@ def main():
             game_name_label.grid(row=0, column=0, columnspan=2, pady=5)
 
             #記錄欄位
-            if self.game_data["name"] != "虛擬筆" :
-                game_record = tk.Label(self, text="最高紀錄 : " + str(grab_upload_data(int(self.game_data['record_code']))), bg="lightsteelblue", fg="blue", font=("Helvetica", 40, "bold"), width=15)
-                game_record.grid(row=0, column=2, columnspan=2, pady=5)
+            game_record = tk.Label(self, text="最高紀錄 : " + str(grab_upload_data(int(self.game_data['record_code']))), bg="lightsteelblue", fg="blue", font=("Helvetica", 40, "bold"), width=15)
+            game_record.grid(row=0, column=2, columnspan=2, pady=5)
 
             # 游戏场景图片
             image = Image.open(f"Resource/img/gamelist/{self.game_data['scene_image']}")
@@ -589,6 +585,8 @@ def main():
             elif self.game_data['code'] == '18':
                 subprocess.Popen(["python3", "Detect.py", self.game_data['code'], '21', '22'])  # 左拇指: 21 + 右拇指: 22
             elif self.game_data['code'] == '19':
+                subprocess.Popen(["python3", "Detect.py", self.game_data['code'], '1', '4'])   # 左眼: 1 + 右眼: 4
+            elif self.game_data['code'] == '20':
                 subprocess.Popen(["python3", "Detect.py", self.game_data['code'], '1', '4'])   # 左眼: 1 + 右眼: 4
         
         def start(self):

@@ -14,7 +14,7 @@ GameInfo = [
         {"code": "13", "line_height": "-10", "text": "檢測雙手是否有節點"},{"code": "14", "line_height": "432", "text": "檢測骨盆兩側是否有節點及膝蓋節點在抬腳及放下時，是否在線的上下方"},
         {"code": "15", "line_height": "-10", "text": "檢測雙手是否有節點"},{"code": "16", "line_height": "-10", "text": "檢測雙肩是否有節點"},
         {"code": "17", "line_height": "-10", "text": "檢測雙手是否有節點"},{"code": "18", "line_height": "-10", "text": "檢測雙手是否有節點"},
-        {"code": "19", "line_height": "-10", "text": "檢測雙眼是否有節點"},{"code": "20", "line_height": "-10", "text": "檢測雙手是否有節點"},
+        {"code": "19", "line_height": "-10", "text": "檢測雙眼是否有節點"},{"code": "20", "line_height": "-10", "text": "檢測雙眼是否有節點"},
     ]
 
 code = sys.argv[1] # game-code
