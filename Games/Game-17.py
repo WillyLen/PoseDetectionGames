@@ -34,7 +34,7 @@ def start_screen():
 
     while True:
         # 顯示開始畫面
-        cv2.putText(imgStart, "Press 'Enter' to Start", (300, 400), cv2.FONT_HERSHEY_COMPLEX, 2, (0, 255, 0), 5)
+        cv2.putText(imgStart, "Press 'Enter' to Start", (int(screen_width/4), int(screen_height/2)), cv2.FONT_HERSHEY_COMPLEX, 2, (0, 255, 0), 5)
         cv2.imshow("tabletennis", imgStart)
         key = cv2.waitKey(1)
         if key == 13:  # Enter鍵開始遊戲

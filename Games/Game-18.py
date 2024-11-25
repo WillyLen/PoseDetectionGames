@@ -135,7 +135,7 @@ while True:
         pointIndex = lmList[8][0:2]
         img = game.update(img, pointIndex)
 
-    cv2.imshow("貪食蛇", img)
+    cv2.imshow("Gluttonous Snack", img)
     key = cv2.waitKey(1)
     if key == ord('r'):
         game.gameOver = False
