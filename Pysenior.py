@@ -575,22 +575,22 @@ def main():
 
         def detect(self):
             if self.game_data['code'] in ['1', '2', '3', '16']:
-                subprocess.Popen(["python3", "Detect.py", self.game_data['code'], '11', '12'])  # 左肩: 11 + 右肩: 12
+                subprocess.Popen(["python", "Detect.py", self.game_data['code'], '11', '12'])  # 左肩: 11 + 右肩: 12
             elif self.game_data['code'] in ['4', '7', '10', '14']:
-                subprocess.Popen(["python3", "Detect.py", self.game_data['code'], '25', '26'])  # 左膝: 25 + 右膝: 26
+                subprocess.Popen(["python", "Detect.py", self.game_data['code'], '25', '26'])  # 左膝: 25 + 右膝: 26
             elif self.game_data['code'] in ['5', '6', '8', '9', '11', '13', '15', '17']:
-                subprocess.Popen(["python3", "Detect.py", self.game_data['code'], '17', '18'])  # 左腕: 17 + 右腕: 18
+                subprocess.Popen(["python", "Detect.py", self.game_data['code'], '17', '18'])  # 左腕: 17 + 右腕: 18
             elif self.game_data['code'] == '12':
-                subprocess.Popen(["python3", "Detect.py", self.game_data['code'], '23', '24'])  # 左臀: 23 + 右臀: 24
+                subprocess.Popen(["python", "Detect.py", self.game_data['code'], '23', '24'])  # 左臀: 23 + 右臀: 24
             elif self.game_data['code'] == '18':
-                subprocess.Popen(["python3", "Detect.py", self.game_data['code'], '21', '22'])  # 左拇指: 21 + 右拇指: 22
+                subprocess.Popen(["python", "Detect.py", self.game_data['code'], '21', '22'])  # 左拇指: 21 + 右拇指: 22
             elif self.game_data['code'] == '19':
-                subprocess.Popen(["python3", "Detect.py", self.game_data['code'], '1', '4'])   # 左眼: 1 + 右眼: 4
+                subprocess.Popen(["python", "Detect.py", self.game_data['code'], '1', '4'])   # 左眼: 1 + 右眼: 4
             elif self.game_data['code'] == '20':
-                subprocess.Popen(["python3", "Detect.py", self.game_data['code'], '1', '4'])   # 左眼: 1 + 右眼: 4
+                subprocess.Popen(["python", "Detect.py", self.game_data['code'], '1', '4'])   # 左眼: 1 + 右眼: 4
         
         def start(self):
-            game_process = subprocess.Popen(["python3", f"Games/Game-{self.game_data['code']}.py"])
+            game_process = subprocess.Popen(["python", f"Games/Game-{self.game_data['code']}.py"])
             game_process.wait()  # 等待游戏结束
             upload_data()
 
