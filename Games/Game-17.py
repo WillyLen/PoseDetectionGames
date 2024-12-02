@@ -55,8 +55,11 @@ cap.set(4, screen_height)#720
 imgBackground = cv2.imread("Resource/img/newgame/Background.png")
 imgGameOver = cv2.imread("Resource/img/newgame/gameOver.png")
 imgBall = cv2.imread("Resource/img/newgame/Ball.png", cv2.IMREAD_UNCHANGED)
-imgBat1 = cv2.imread("Resource/img/newgame/bat1.png", cv2.IMREAD_UNCHANGED)
-imgBat2 = cv2.imread("Resource/img/newgame/bat2.png", cv2.IMREAD_UNCHANGED)
+bat1_height = 300
+bat2_height = 300
+imgBat1 = cv2.resize(cv2.imread("Resource/img/newgame/bat1.png", cv2.IMREAD_UNCHANGED), (50, bat1_height))
+imgBat2 = cv2.resize(cv2.imread("Resource/img/newgame/bat2.png", cv2.IMREAD_UNCHANGED), (50, bat2_height))
+
 font_name = os.path.join("Resource/font.ttf")
 
 # 手部偵測器
@@ -94,22 +97,23 @@ while True:
         for hand in hands:
             x, y, w, h = hand['bbox']
             h1, w1, _ = imgBat1.shape
-            y1 = y - h1 // 2
-            y1 = np.clip(y1, 20, screen_height-h1-20)
+            y1 = y - bat1_height // 2
+            y1 = np.clip(y1, 20, screen_height - bat1_height - 20)
 
             if hand['type'] == "Left":
-                img = cvzone.overlayPNG(img, imgBat1, (int(screen_width*0.046875), y1))
-                if screen_width*0.046875 < ballPos[0] < screen_width*0.046875 + w1 and y1 < ballPos[1] < y1 + h1:
+                img = cvzone.overlayPNG(img, imgBat1, (int(screen_width * 0.046875), y1))
+                if screen_width * 0.046875 < ballPos[0] < screen_width * 0.046875 + 50 and y1 < ballPos[1] < y1 + bat1_height:
                     speedX = -speedX
                     ballPos[0] += 30
                     score[0] += 1
 
             if hand['type'] == "Right":
-                img = cvzone.overlayPNG(img, imgBat2, (int(screen_width*0.9336), y1))
-                if screen_width*0.9336 - 50 < ballPos[0] < screen_width*0.9336 and y1 < ballPos[1] < y1 + h1:
+                img = cvzone.overlayPNG(img, imgBat2, (int(screen_width * 0.9336), y1))
+                if screen_width * 0.9336 - 50 < ballPos[0] < screen_width * 0.9336 and y1 < ballPos[1] < y1 + bat2_height:
                     speedX = -speedX
                     ballPos[0] -= 30
                     score[1] += 1
+
 
     # 遊戲結束條件
     if ballPos[0] < screen_width * 0.03125 or ballPos[0] > screen_width * 0.9375:

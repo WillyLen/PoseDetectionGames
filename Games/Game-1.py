@@ -3,43 +3,28 @@ import random                    # 用於生成隨機位置的石頭和金幣
 import cv2                       # 用於開啟攝像頭來捕捉玩家動作
 import mediapipe as mp           # 用於肢體追蹤，偵測玩家的肩膀位置
 import os                        # 用於文件操作（例如讀取/保存遊戲數據）
-import sys                       # 提供對Python運行時環境的訪問
+import sys
 
-# 添加當前腳本所在目錄的上級目錄到系統路徑
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from Utils import update_game_data, grab_game_data, update_upload_data, grab_upload_data
+from Utils import update_verify_data, grab_verify_data, grab_verify_data_int
+from Utils import get_mac, hash_mac, hash_str, generate_key, hash_x, hash_key 
+from Utils import encrypt, encrypt_csv, decrypt, decrypt_csv
 
-# 從自定義工具模組導入函數
-from Utils import (
-    update_game_data, grab_game_data, update_upload_data, grab_upload_data,
-    update_verify_data, grab_verify_data, grab_verify_data_int,
-    get_mac, hash_mac, hash_str, generate_key, hash_x, hash_key,
-    encrypt, encrypt_csv, decrypt, decrypt_csv
-)
+### 參數調整 ###
+# 石頭速度
+dropspeed = grab_game_data(2)
 
-# 嘗試初始化 Mediapipe 的肢體偵測功能
-try:
-    mpDraw = mp.solutions.drawing_utils
-    mpPose = mp.solutions.pose
-    pose = mpPose.Pose()
-except Exception as e:
-    print("Mediapipe 模組初始化失敗！請確認模組是否正確安裝。\n錯誤訊息:", str(e))
-    sys.exit()
+# 石頭數量
+quantity = grab_game_data(3)
 
-# 嘗試開啟攝像頭
-cap = cv2.VideoCapture(0)
-if not cap.isOpened():
-    print("無法讀取攝像頭！請檢查設備是否正確連接或被其他程序佔用。")
-    sys.exit()
+# 基礎參數設定
+FPS = 60
+countdown_start_time = 0
 
-### 遊戲參數設置 ###
-dropspeed = grab_game_data(2)   # 石頭掉落速度
-quantity = grab_game_data(3)   # 石頭的數量
-FPS = 60                       # 每秒幀數
-countdown_start_time = 0       # 倒數計時初始時間
-
-# 根據樣式參數設定背景圖片資料夾路徑
+# 圖片更換
 style = grab_game_data(1)
-if style == 0 or style is None:
+if style == 0 or style == None:
     custom = "Resource/img/普通"
 elif style == 1:
     custom = "Resource/img/特別"
@@ -52,41 +37,236 @@ elif style == 4:
 elif style == 5:
     custom = "Resource/img/海洋"
 
-# 初始化遊戲，設置視窗大小和標題
+mpDraw = mp.solutions.drawing_utils
+mpPose = mp.solutions.pose
+pose = mpPose.Pose()
+
+cap = cv2.VideoCapture(0)
+
+GameName = "躲隕石"
+
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
+GREEN = (0, 255, 0)
+RED = (255, 0, 0)
+YELLOW = (255, 255, 0)
+
+# 遊戲初始化＆視窗大小設定
 pygame.init()
 info = pygame.display.Info()
-WIDTH = info.current_w               # 獲取螢幕寬度
-HEIGHT = info.current_h              # 獲取螢幕高度
-SCR = (WIDTH, HEIGHT * 0.95)         # 設定遊戲視窗大小
-pygame.mixer.init()                  # 初始化音樂混音器
-screen = pygame.display.set_mode(SCR)  # 創建遊戲視窗
-pygame.display.set_caption("躲隕石")  # 設定視窗標題
-clock = pygame.time.Clock()          # 初始化遊戲時鐘
+WIDTH = info.current_w
+HEIGHT = info.current_h
+SCR = (WIDTH, HEIGHT*0.95)
+pygame.mixer.init()
+screen = pygame.display.set_mode(SCR)
+pygame.display.set_caption(GameName)
+clock = pygame.time.Clock()
 
-# 確保背景圖片加載成功
-try:
-    background_img = pygame.image.load(os.path.join(custom, "Bg_1.jpg")).convert()
-except Exception as e:
-    print("背景圖片讀取失敗！請確認路徑是否正確。\n錯誤訊息:", str(e))
-    sys.exit()
-
-# 加載其他資源
+# 讀取樣式
+# 載入音樂
 pygame.mixer.music.load(os.path.join("Resource/sound", "Msc_1_1.ogg"))
 pygame.mixer.music.set_volume(0.7)
+
+# 載入圖片
+background_img = pygame.image.load(os.path.join(custom, "Bg_1.jpg")).convert()
 player_img = pygame.image.load(os.path.join(custom, "Cha_1.png")).convert()
 rock_img = pygame.image.load(os.path.join(custom, "Obj_1_1.png")).convert()
 heart_img = pygame.image.load(os.path.join(custom, "Obj_1_2.png")).convert()
 timeboard_img = pygame.image.load(os.path.join("Resource/img/普通", "timeboard.png")).convert()
-
-# 圖片大小調整
+###
 background_img = pygame.transform.scale(background_img, (WIDTH, HEIGHT))
-timeboard_img = pygame.transform.scale(timeboard_img, (WIDTH / 5, HEIGHT / 6))
-timeboard_img.set_colorkey((255, 255, 255))  # 設置透明背景
-font_name = os.path.join("Resource/font.ttf")  # 字型檔案
+timeboard_img = pygame.transform.scale(timeboard_img, (WIDTH/5, HEIGHT/6))
+timeboard_img.set_colorkey(WHITE)
+font_name = os.path.join("Resource/font.ttf")
 
-# 更多遊戲邏輯...
+def draw_text(surf, text, size, x, y):
+    font = pygame.font.Font(font_name, size)
+    text_surface = font.render(text, True, WHITE)
+    text_rect = text_surface.get_rect()
+    text_rect.centerx = x
+    text_rect.top = y
+    surf.blit(text_surface, text_rect)
 
-# 程式結束時釋放資源
-pygame.quit()
+def new_rock():
+    r = Rock()
+    all_sprites.add(r)
+    rocks.add(r)
+
+def draw_health(surf, hp, x, y):
+    if hp < 0:
+        hp = 0
+    heart_img.set_colorkey(BLACK)
+    heart1 = pygame.transform.scale(heart_img, (WIDTH/10, WIDTH/10))
+    heart2 = pygame.transform.scale(heart_img, (WIDTH/10, WIDTH/10))
+    heart3 = pygame.transform.scale(heart_img, (WIDTH/10, WIDTH/10))
+    if hp == 3:
+        screen.blit(heart1, (10, 10))
+        screen.blit(heart2, (10+WIDTH/10, 10))
+        screen.blit(heart3, (10+WIDTH/5, 10))
+    elif hp == 2:
+        screen.blit(heart1, (10, 10))
+        screen.blit(heart2, (10+WIDTH/10, 10))
+    elif hp == 1:
+        screen.blit(heart1, (10, 10))
+    pygame.display.update()
+
+def draw_init():
+    screen.blit(background_img, (0, 0))
+    draw_text(screen, '躲隕石', 64, WIDTH / 2, HEIGHT / 4)
+    draw_text(screen, '操作說明：身體控制人物左右，躲避隕石', 22, WIDTH / 2, HEIGHT / 2)
+    draw_text(screen, '按Enter鍵開始遊戲', 22, WIDTH / 2, HEIGHT * 3 / 4)
+    pygame.display.update()
+    waiting = True
+    while waiting:
+        clock.tick(FPS)
+        # 取得輸入
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                # root.mainloop()
+            elif event.type == pygame.KEYUP:
+                waiting = False
+
+class Player(pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        width = 300 * (WIDTH / 1280)
+        height = 180 * (HEIGHT / 800)
+        self.image = pygame.transform.scale(player_img, (width, height))
+        self.image.set_colorkey(BLACK)
+        self.rect = self.image.get_rect()
+        self.radius = 40
+        self.rect.centerx = WIDTH / 2
+        self.rect.bottom = HEIGHT - height/2
+        self.speedx = 8
+        self.health = 3
+
+    def update(self):
+        if self.rect.right > WIDTH:
+            self.rect.right = WIDTH
+        if self.rect.left < 0:
+            self.rect.left = 0
+
+class Rock(pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.size = random.randrange(60, 100)
+        self.image_ori = pygame.transform.scale(rock_img, (self.size, self.size))
+        self.image_ori.set_colorkey(BLACK)
+        self.image = self.image_ori.copy()
+        self.rect = self.image.get_rect()
+        self.radius = int(self.rect.width * 0.85 / 3)
+        self.rect.x = random.randrange(0, WIDTH - self.rect.width)
+        self.rect.y = random.randrange(-180, -100)
+        self.speedy = dropspeed
+
+    def update(self):
+        self.rect.y += self.speedy
+        if self.rect.top > HEIGHT or self.rect.left > WIDTH or self.rect.right < 0:
+            self.rect.x = random.randrange(0, WIDTH - self.rect.width)
+            self.rect.y = random.randrange(-100, -40)
+            self.speedy = random.randrange(8, 13)
+
+all_sprites = pygame.sprite.Group()
+rocks = pygame.sprite.Group()
+player = Player()
+all_sprites.add(player)
+for i in range(quantity):
+    new_rock()
+score = 0
+pygame.mixer.music.play(-1)
+
+# 遊戲迴圈
+show_init = True
+running = True
+game_over = False
+while running:
+    countdown_time = pygame.time.get_ticks() - countdown_start_time
+    countdown = (60 - int(countdown_time / 1000))
+    success, img = cap.read()
+    img = cv2.resize(img, (WIDTH, HEIGHT))
+    img = cv2.flip(img, 1)
+    imgRGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    results = pose.process(imgRGB)
+    if results.pose_landmarks:
+        mpDraw.draw_landmarks(img, results.pose_landmarks, mpPose.POSE_CONNECTIONS)
+        for id, lm in enumerate(results.pose_landmarks.landmark):
+            h, w, c = img.shape
+            lmlist = []
+            bx, by = int(lm.x * w), int(lm.y * h)
+            cx, cy = int(lm.x * w), int(lm.y * h)
+            cv2.circle(img, (cx, cy), 10, (205, 0, 0), cv2.FILLED)
+            lmlist.append([id, cx, cy])
+
+            # Left_Shoulder
+            if lmlist[0][0] == 11:
+                cv2.circle(img, (cx, cy), 15, (0, 0, 255), cv2.FILLED)
+                x1 = lmlist[0][1]
+                y1 = lmlist[0][2]
+            # Right_Shoulder
+            elif lmlist[0][0] == 12:
+                cv2.circle(img, (bx, by), 15, (0, 255, 0), cv2.FILLED)
+                x2 = lmlist[0][1]
+                y2 = lmlist[0][2]
+
+                centerx = int((x1 + x2) / 2)
+                centery = int((y1 + y2) / 2)
+                cv2.circle(img, (centerx, centery), 15, (0, 255, 255), cv2.FILLED)
+                # print(centerx, centery)
+                player.rect.x = centerx
+    # cv2.imshow("webcam", img)
+    cv2.waitKey(1)
+    if show_init:
+        draw_init()
+        show_init = False
+        game_over = False
+        all_sprites = pygame.sprite.Group()
+        rocks = pygame.sprite.Group()
+        player = Player()
+        all_sprites.add(player)
+        for i in range(quantity):
+            new_rock()
+        score = 0
+        countdown_start_time = pygame.time.get_ticks()
+
+    clock.tick(FPS)
+
+    # 取得輸入
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+            # root.mainloop()
+    # 更新遊戲
+    all_sprites.update()
+    if not game_over:
+        # 檢查倒數是否結束
+        if countdown <= 0:
+            game_over = True  # 標記遊戲結束
+            show_init = True
+    hits = pygame.sprite.spritecollide(player, rocks, True, pygame.sprite.collide_circle)
+    for hit in hits:
+        new_rock()
+        player.health -= 1
+        if player.health <= 0:
+            game_over = True
+            show_init = True
+
+    # DataSave
+    if grab_upload_data(2) == 0:
+        update_upload_data(2, 60-countdown)
+    else:
+        if grab_upload_data(2) < 60-countdown:
+            update_upload_data(2, 60-countdown)
+
+    # 畫面顯示
+    screen.fill(BLACK)
+    screen.blit(background_img, (0, 0))
+    all_sprites.draw(screen)
+    draw_health(screen, player.health, 5, 15)
+    screen.blit(timeboard_img, (WIDTH - (10 + WIDTH/5), 10))
+    draw_text(screen, str(countdown), 90, WIDTH - (10 + WIDTH/10), HEIGHT/25)
+    pygame.display.update()
+
+pygame.quit() 
 cap.release()  # 釋放攝像頭
 cv2.destroyAllWindows()  # 關閉所有 OpenCV 視窗

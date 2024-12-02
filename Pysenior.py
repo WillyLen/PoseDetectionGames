@@ -47,7 +47,7 @@ RELOADING = False
 games = [
     {"code": "1", "record_code": "2", "name": "躲隕石", "scene_image": "Game_1_1.jpg", "intro_image": "Act_1_1.png", "intro_text": "移動身體來操控人物躲避物品，時間過越久分數越高"},
     {"code": "2", "record_code": "3", "name": "接金幣", "scene_image": "Game_1_2.jpg", "intro_image": "Act_1_2.png", "intro_text": "移動身體來操控人物接金幣，時間到接越多顆分數越高"},
-    {"code": "3", "record_code": "4", "name": "挖蘿蔔", "scene_image": "Game_1_3.jpg", "intro_image": "Act_1_3.png", "intro_text": "身體來回蹲下操控鏟子挖出蘿蔔，一個一分"},
+    {"code": "3", "record_code": "4", "name": "挖蘿蔔", "scene_image": "Game_1_3.jpg", "intro_image": "Act_1_3.png", "intro_text": "身體來回蹲下操控鏟子挖出蘿蔔得分"},
     {"code": "4", "record_code": "5", "name": "追趕跳碰", "scene_image": "Game_1_4.jpg", "intro_image": "Act_1_4.png", "intro_text": "雙腳保持頻率抬高，速度加快，反之減速，被狼追到就會結束遊戲"},
     {"code": "5", "record_code": "6", "name": "抓蝴蝶", "scene_image": "Game_1_5.jpg", "intro_image": "Act_1_5.png", "intro_text": "雙手即網子，用兩個網子捕捉蝴蝶"},
     {"code": "6", "record_code": "7", "name": "鬆土", "scene_image": "Game_2_1.jpg", "intro_image": "Act_2_1.png", "intro_text": "雙手重複舉高放下，時限內去除越多稻草分數越高"},
