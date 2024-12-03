@@ -12,6 +12,8 @@ from Utils import get_mac, hash_mac, hash_str, generate_key, hash_x, hash_key
 from Utils import encrypt, encrypt_csv, decrypt, decrypt_csv
 
 ### 參數調整 ###
+# 人物大小
+cha_size = grab_game_data(12) / 2
 
 # 基礎參數設定
 FPS = 60
@@ -72,12 +74,14 @@ player_imgs = []
 for i in range(4):
     player_img = pygame.image.load(os.path.join(custom, f"Cha_7_{i}.png")).convert()
     player_img.set_colorkey(BLACK)
-    player_imgs.append(pygame.transform.scale(player_img, (350, 350)))
+    player_size = 350 * cha_size
+    player_imgs.append(pygame.transform.scale(player_img, (player_size, player_size)))
 waterwheel_imgs = []
 for i in range(4):
     waterwheel_img = pygame.image.load(os.path.join(custom, f"Obj_7_{i}.png")).convert()
     waterwheel_img.set_colorkey(BLACK)
-    waterwheel_imgs.append(pygame.transform.scale(waterwheel_img, (300, 300)))
+    waterwheel_size = 300 * cha_size
+    waterwheel_imgs.append(pygame.transform.scale(waterwheel_img, (cha_size, cha_size)))
 ###
 background_img = pygame.transform.scale(background_img, (WIDTH, HEIGHT))
 scoreboard_img = pygame.image.load(os.path.join("Resource/img/普通", "scoreboard.png")).convert()

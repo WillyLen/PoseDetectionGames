@@ -12,6 +12,8 @@ from Utils import get_mac, hash_mac, hash_str, generate_key, hash_x, hash_key
 from Utils import encrypt, encrypt_csv, decrypt, decrypt_csv
 
 ### 參數調整 ###
+# 人物大小
+cha_size = grab_game_data(12) / 2
 
 # 基礎參數設定
 FPS = 60
@@ -132,7 +134,7 @@ class Player(pygame.sprite.Sprite):
 class Balloon(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.size = WIDTH / 10
+        self.size = WIDTH / 10 * cha_size
         self.image = balloon_img
         self.image = pygame.transform.scale(balloon_img, (self.size, self.size))
         self.image.set_colorkey(BLACK)

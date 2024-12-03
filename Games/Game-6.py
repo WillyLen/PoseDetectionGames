@@ -12,6 +12,8 @@ from Utils import get_mac, hash_mac, hash_str, generate_key, hash_x, hash_key
 from Utils import encrypt, encrypt_csv, decrypt, decrypt_csv
 
 ### 參數調整 ###
+# 人物大小
+cha_size = grab_game_data(12) / 2
 
 # 基礎參數設定
 FPS = 60
@@ -241,7 +243,7 @@ def draw_init():
 class Farmer(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.size = WIDTH/5
+        self.size = WIDTH/5 * cha_size
         self.image = pygame.transform.scale(farm_imgs[cycle_out], (self.size, self.size))
         self.rect = self.image.get_rect()
         self.rect.x = WIDTH/10  # [WIDTH/10, WIDTH*4/10, WIDTH*7/10]

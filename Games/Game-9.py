@@ -12,6 +12,8 @@ from Utils import get_mac, hash_mac, hash_str, generate_key, hash_x, hash_key
 from Utils import encrypt, encrypt_csv, decrypt, decrypt_csv
 
 ### 參數調整 ###
+# 人物大小
+cha_size = grab_game_data(12) / 2
 
 # 基礎參數設定
 FPS = 60
@@ -72,10 +74,10 @@ background_img = pygame.image.load(os.path.join(custom, "Bg_9.jpg")).convert()
 crop_img = pygame.image.load(os.path.join(custom, "Obj_9_0.png")).convert()
 cow_img = pygame.image.load(os.path.join(custom, "Obj_9_1.png")).convert()
 ###
-cow_img = pygame.transform.scale(cow_img, (WIDTH/4, HEIGHT/4))
+cow_img = pygame.transform.scale(cow_img, (WIDTH/4*cha_size, HEIGHT/4*cha_size))
 cow_img.set_colorkey(BLACK)
 background_img = pygame.transform.scale(background_img, (WIDTH, HEIGHT))
-crop_img = pygame.transform.scale(crop_img, (WIDTH * 0.15, HEIGHT * 3 / 11))
+crop_img = pygame.transform.scale(crop_img, (WIDTH * 0.15*cha_size, HEIGHT * 3 / 11*cha_size))
 crop_img.set_colorkey(BLACK)
 font_name = os.path.join("Resource/font.ttf")
 

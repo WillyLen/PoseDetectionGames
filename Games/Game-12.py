@@ -12,6 +12,8 @@ from Utils import get_mac, hash_mac, hash_str, generate_key, hash_x, hash_key
 from Utils import encrypt, encrypt_csv, decrypt, decrypt_csv
 
 ### 參數調整 ###
+# 人物大小
+cha_size = grab_game_data(12) / 2
 
 # 基礎參數設定
 FPS = 60
@@ -109,11 +111,11 @@ def draw_init():
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.size = WIDTH/5
+        self.size = WIDTH/5 * cha_size
         self.image = pygame.transform.scale(player_img, (self.size, self.size))
         self.image.set_colorkey(BLACK)
         self.rect = self.image.get_rect()
-        self.radius = WIDTH/40
+        self.radius = WIDTH/40 * cha_size
         self.rect.centerx = WIDTH / 2
         self.rect.centery = HEIGHT / 2 + 100
 
@@ -126,12 +128,12 @@ class Player(pygame.sprite.Sprite):
 class Egg(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.size = WIDTH/10
+        self.size = WIDTH/10 * cha_size
         self.image_ori = pygame.transform.scale(egg_img, (self.size, self.size))
         self.image_ori.set_colorkey(BLACK)
         self.image = self.image_ori.copy()
         self.rect = self.image.get_rect()
-        self.radius = int(self.rect.width * 0.85 / 2)
+        self.radius = int(self.rect.width * 0.85 / 2 * cha_size)
         self.rect.centerx = random.choice([WIDTH/6, WIDTH*2/6, WIDTH*3/6, WIDTH*4/6, WIDTH*5/6])
         self.rect.centery = HEIGHT / 2 + 100
 

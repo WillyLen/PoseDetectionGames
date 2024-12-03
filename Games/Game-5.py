@@ -12,6 +12,8 @@ from Utils import get_mac, hash_mac, hash_str, generate_key, hash_x, hash_key
 from Utils import encrypt, encrypt_csv, decrypt, decrypt_csv
 
 ### 參數調整 ###
+# 人物大小
+cha_size = grab_game_data(12) / 2
 
 # 蝴蝶數量
 quantity = grab_game_data(6)
@@ -113,10 +115,10 @@ def draw_init():
 class Net_1(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.transform.scale(net_1_img, (WIDTH/5, WIDTH/7))
+        self.image = pygame.transform.scale(net_1_img, (WIDTH/5* cha_size, WIDTH/7* cha_size))
         self.image.set_colorkey(BLACK)
         self.rect = self.image.get_rect()
-        self.radius = 75 * (WIDTH / 1280)
+        self.radius = 75 * (WIDTH / 1280) * cha_size
         self.rect.centerx = WIDTH / 2
         self.rect.bottom = HEIGHT - 10
 
@@ -129,10 +131,10 @@ class Net_1(pygame.sprite.Sprite):
 class Net_2(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.transform.scale(net_2_img, (WIDTH/5, WIDTH/7))
+        self.image = pygame.transform.scale(net_2_img, (WIDTH/5* cha_size, WIDTH/7* cha_size))
         self.image.set_colorkey(BLACK)
         self.rect = self.image.get_rect()
-        self.radius = 75 * (WIDTH / 1280)
+        self.radius = 75 * (WIDTH / 1280) * cha_size
         self.rect.centerx = WIDTH / 2
         self.rect.bottom = HEIGHT - 10
 
@@ -145,12 +147,12 @@ class Net_2(pygame.sprite.Sprite):
 class Butterfly(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.size = 125 * (WIDTH / 1280)
+        self.size = 125 * (WIDTH / 1280) * cha_size
         self.image_ori = pygame.transform.scale(butterfly_img, (self.size, self.size))
         self.image_ori.set_colorkey(BLACK)
         self.image = self.image_ori.copy()
         self.rect = self.image.get_rect()
-        self.radius = 125 * (WIDTH / 1280)
+        self.radius = 125 * (WIDTH / 1280) * cha_size
         self.rect.x = random.randrange(WIDTH * 2 / 8, WIDTH * 6 / 8)
         self.rect.y = random.randrange(HEIGHT * 2 / 8, HEIGHT * 6 / 8)
         self.last = pygame.time.get_ticks()

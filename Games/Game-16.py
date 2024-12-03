@@ -12,6 +12,8 @@ from Utils import get_mac, hash_mac, hash_str, generate_key, hash_x, hash_key
 from Utils import encrypt, encrypt_csv, decrypt, decrypt_csv
 
 ### 參數調整 ###
+# 人物大小
+cha_size = grab_game_data(12) / 2
 
 # 基礎參數設定
 FPS = 60
@@ -119,10 +121,10 @@ def draw_init():
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.transform.scale(player_img, (WIDTH * 0.1, HEIGHT * 0.15))
+        self.image = pygame.transform.scale(player_img, (WIDTH * 0.1 * cha_size, HEIGHT * 0.15 * cha_size))
         self.image.set_colorkey(BLACK)
         self.rect = self.image.get_rect()
-        self.radius = WIDTH*0.02
+        self.radius = WIDTH*0.02 * cha_size
         self.rect.centerx = WIDTH / 2
         self.rect.bottom = HEIGHT - 100
         self.speedx = 8

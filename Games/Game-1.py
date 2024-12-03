@@ -12,6 +12,9 @@ from Utils import get_mac, hash_mac, hash_str, generate_key, hash_x, hash_key
 from Utils import encrypt, encrypt_csv, decrypt, decrypt_csv
 
 ### 參數調整 ###
+# 人物大小
+cha_size = grab_game_data(12) / 2
+
 # 石頭速度
 dropspeed = grab_game_data(2)
 
@@ -130,12 +133,12 @@ def draw_init():
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        width = 300 * (WIDTH / 1280)
-        height = 180 * (HEIGHT / 800)
+        width = 300 * (WIDTH / 1280) * cha_size
+        height = 180 * (HEIGHT / 800) * cha_size
         self.image = pygame.transform.scale(player_img, (width, height))
         self.image.set_colorkey(BLACK)
         self.rect = self.image.get_rect()
-        self.radius = 40
+        self.radius = 40  * cha_size
         self.rect.centerx = WIDTH / 2
         self.rect.bottom = HEIGHT - height/2
         self.speedx = 8
@@ -150,12 +153,12 @@ class Player(pygame.sprite.Sprite):
 class Rock(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.size = random.randrange(60, 100)
+        self.size = random.randrange(60, 100) / cha_size
         self.image_ori = pygame.transform.scale(rock_img, (self.size, self.size))
         self.image_ori.set_colorkey(BLACK)
         self.image = self.image_ori.copy()
         self.rect = self.image.get_rect()
-        self.radius = int(self.rect.width * 0.85 / 3)
+        self.radius = int(self.rect.width * 0.85 / 3 / cha_size)
         self.rect.x = random.randrange(0, WIDTH - self.rect.width)
         self.rect.y = random.randrange(-180, -100)
         self.speedy = dropspeed

@@ -1,2 +1,2 @@
-id,style,G1-speed,G1-quantity,G2-speed,G2-quantity,G5-quantity,G11-puncturetime,G13-speed,G17-Xspeed,G17-Yspeed,G19-pipespeed
-001,0,10,10,10,3,3,3,10,10,5,30
+id,style,G1-speed,G1-quantity,G2-speed,G2-quantity,G5-quantity,G11-puncturetime,G13-speed,G17-Xspeed,G17-Yspeed,G19-pipespeed,Character-size
+001,0,10,10,10,3,3,3,10,10,5,30,2

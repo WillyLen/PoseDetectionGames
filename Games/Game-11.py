@@ -12,6 +12,8 @@ from Utils import get_mac, hash_mac, hash_str, generate_key, hash_x, hash_key
 from Utils import encrypt, encrypt_csv, decrypt, decrypt_csv
 
 ### 參數調整 ###
+# 人物大小
+cha_size = grab_game_data(12) / 2
 
 # 基礎參數設定
 FPS = 60
@@ -121,11 +123,11 @@ def draw_init():
 class Thumbtack(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.size = 100 * (WIDTH / 1280)
+        self.size = 100 * (WIDTH / 1280) * cha_size
         self.image = pygame.transform.scale(thumbtack_img, (self.size, self.size))
         self.image.set_colorkey(BLACK)
         self.rect = self.image.get_rect()
-        self.radius = 75 * (WIDTH / 1280)
+        self.radius = 75 * (WIDTH / 1280) * cha_size
         self.rect.centerx = WIDTH / 2
         self.rect.bottom = HEIGHT - 10
 
@@ -138,12 +140,12 @@ class Thumbtack(pygame.sprite.Sprite):
 class Balloon(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.size = 125 * (WIDTH / 1280)
+        self.size = 125 * (WIDTH / 1280) * cha_size
         self.image_ori = pygame.transform.scale(balloon_img, (self.size, self.size))
         self.image_ori.set_colorkey(BLACK)
         self.image = self.image_ori.copy()
         self.rect = self.image.get_rect()
-        self.radius = 100 * (WIDTH / 1280)
+        self.radius = 100 * (WIDTH / 1280) * cha_size
         self.rect.x = random.randrange(100, WIDTH - 100)
         self.rect.y = random.randrange(150, HEIGHT*3/4)
         self.last = pygame.time.get_ticks()

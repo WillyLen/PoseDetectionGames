@@ -12,6 +12,9 @@ from Utils import get_mac, hash_mac, hash_str, generate_key, hash_x, hash_key
 from Utils import encrypt, encrypt_csv, decrypt, decrypt_csv
 
 ### 參數調整 ###
+# 人物大小
+cha_size = grab_game_data(12) / 2
+
 # 基礎參數設定
 FPS = 60
 countdown_start_time = 0
@@ -114,12 +117,12 @@ def draw_init():
 class Shovel(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.width = 150 * (WIDTH / 1280)
-        self.height = 80 * (HEIGHT / 800)
+        self.width = 150 * (WIDTH / 1280) * cha_size
+        self.height = 80 * (HEIGHT / 800) * cha_size
         self.image = pygame.transform.scale(shovel_down_img, (self.width, self.height))
         self.image.set_colorkey(BLACK)
         self.rect = self.image.get_rect()
-        self.radius = 40 * (WIDTH / 1280)
+        self.radius = 40 * (WIDTH / 1280) * cha_size
         self.rect.centerx = WIDTH / 2
         self.rect.bottom = HEIGHT - 10
         self.score = 0

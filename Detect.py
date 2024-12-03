@@ -42,7 +42,7 @@ def show_camera_with_pose():
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
 
     # 设置中文字体路径
-    font_path = "Resource/font.ttf"  # macOS 示例路径，请修改为 Windows 的中文字体路径
+    font_path = "/System/Library/Fonts/STHeiti Medium.ttc"  # macOS 示例路径，请修改为 Windows 的中文字体路径
     font = ImageFont.truetype(font_path, 40)
 
     while True:

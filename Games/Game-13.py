@@ -12,6 +12,8 @@ from Utils import get_mac, hash_mac, hash_str, generate_key, hash_x, hash_key
 from Utils import encrypt, encrypt_csv, decrypt, decrypt_csv
 
 ### 參數調整 ###
+# 人物大小
+cha_size = grab_game_data(12) / 2
 
 # 果子速度
 dropspeed = grab_game_data(8)
@@ -124,11 +126,11 @@ def greendot():
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.size = WIDTH/4
+        self.size = WIDTH/4 * cha_size
         self.image = pygame.transform.scale(player_img, (self.size, self.size))
         self.image.set_colorkey(BLACK)
         self.rect = self.image.get_rect()
-        self.radius = WIDTH / 20
+        self.radius = WIDTH / 20 * cha_size
         self.rect.x = WIDTH / 2
         self.rect.y = HEIGHT * 0.6
 
@@ -141,12 +143,12 @@ class Player(pygame.sprite.Sprite):
 class Fruit(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.size = WIDTH / 10
+        self.size = WIDTH / 10 * cha_size
         self.i = random.randrange(0, 5)
         self.image = pygame.transform.scale(fruit_imgs[self.i], (self.size, self.size))
         self.image.set_colorkey(BLACK)
         self.rect = self.image.get_rect()
-        self.radius = WIDTH / 20
+        self.radius = WIDTH / 20 * cha_size
         self.rect.x = HEIGHT * 0.85
         self.rect.y = 50
         self.speedy = dropspeed

@@ -12,7 +12,8 @@ from Utils import get_mac, hash_mac, hash_str, generate_key, hash_x, hash_key
 from Utils import encrypt, encrypt_csv, decrypt, decrypt_csv
 
 ### 參數調整 ###
-
+# 人物大小
+cha_size = grab_game_data(12) / 2
 # 基礎參數設定
 FPS = 60
 countdown_start_time = 0
@@ -73,14 +74,14 @@ crop_imgs = []
 for i in range(4):
     crop_img = pygame.image.load(os.path.join(custom, f"Obj_8_{i}.png")).convert()
     crop_img.set_colorkey(BLACK)
-    crop_imgs.append(pygame.transform.scale(crop_img, (WIDTH*0.15, HEIGHT/4)))
+    crop_imgs.append(pygame.transform.scale(crop_img, (WIDTH*0.15*cha_size, HEIGHT/4*cha_size)))
 ###
 background_img = pygame.transform.scale(background_img, (WIDTH, HEIGHT))
 farm_imgs = []
 for i in range(6):
     farm_img = pygame.image.load(os.path.join("Resource/img/普通", f"Cha_8_{i}.png")).convert()
     farm_img.set_colorkey(BLACK)
-    farm_imgs.append(pygame.transform.scale(farm_img, (WIDTH*0.22, HEIGHT*0.4)))
+    farm_imgs.append(pygame.transform.scale(farm_img, (WIDTH*0.22*cha_size, HEIGHT*0.4*cha_size)))
 font_name = os.path.join("Resource/font.ttf")
 
 def draw_text(surf, text, size, x, y):
