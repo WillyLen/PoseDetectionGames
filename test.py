@@ -1,117 +1,167 @@
 import cv2
 import mediapipe as mp
-import math
 import time
+import numpy as np
 
-# 初始化 Mediapipe Pose 模組
+# 初始化 Mediapipe
 mp_pose = mp.solutions.pose
 pose = mp_pose.Pose()
 mp_drawing = mp.solutions.drawing_utils
 
-# 記錄結果
-max_distances = {
-    "left_step": 0,
-    "right_step": 0,
-    "hand_height": 0,
-    "leg_height": 0,
-    "hip_distance": 0,
-    "arm_span": 0
-}
-squat_times = {"start": None, "end": None}
-
-# 計算距離
-def calculate_distance(point1, point2, axis="x"):
-    if axis == "x":
-        return abs(point1.x - point2.x)
-    elif axis == "y":
-        return abs(point1.y - point2.y)
-
-# 偵測動作
-def detect_action(image, landmarks, action_type):
-    global max_distances, squat_times
-
-    if action_type == "left_step":  # 左跨步最遠距離
-        left_foot = landmarks[mp_pose.PoseLandmark.LEFT_FOOT_INDEX]
-        max_distances["left_step"] = max(max_distances["left_step"], abs(left_foot.x - 0.5))  # 假設 0.5 是初始位置
-
-    elif action_type == "right_step":  # 右跨步最遠距離
-        right_foot = landmarks[mp_pose.PoseLandmark.RIGHT_FOOT_INDEX]
-        max_distances["right_step"] = max(max_distances["right_step"], abs(right_foot.x - 0.5))  # 假設 0.5 是初始位置
-
-    elif action_type == "squat_time":  # 蹲下起來時間
-        hip = landmarks[mp_pose.PoseLandmark.LEFT_HIP]
-        if hip.y > 0.7:  # 假設 0.7 是蹲下閾值
-            if squat_times["start"] is None:
-                squat_times["start"] = time.time()
-        else:
-            if squat_times["start"] is not None and squat_times["end"] is None:
-                squat_times["end"] = time.time()
-                elapsed = squat_times["end"] - squat_times["start"]
-                cv2.putText(image, f"Squat Time: {elapsed:.2f}s", (10, 90),
-                            cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 0), 2)
-
-    elif action_type == "hand_height":  # 最高臂展
-        left_wrist = landmarks[mp_pose.PoseLandmark.LEFT_WRIST]
-        right_wrist = landmarks[mp_pose.PoseLandmark.RIGHT_WRIST]
-        nose = landmarks[mp_pose.PoseLandmark.NOSE]
-        max_distances["hand_height"] = max(max_distances["hand_height"],
-                                           calculate_distance(left_wrist, nose, axis="y"),
-                                           calculate_distance(right_wrist, nose, axis="y"))
-
-    elif action_type == "leg_height":  # 最高抬腳高度
-        left_ankle = landmarks[mp_pose.PoseLandmark.LEFT_ANKLE]
-        left_hip = landmarks[mp_pose.PoseLandmark.LEFT_HIP]
-        max_distances["leg_height"] = max(max_distances["leg_height"],
-                                          calculate_distance(left_ankle, left_hip, axis="y"))
-
-    elif action_type == "hip_distance":  # 髖關節最遠移動距離
-        left_hip = landmarks[mp_pose.PoseLandmark.LEFT_HIP]
-        max_distances["hip_distance"] = max(max_distances["hip_distance"],
-                                            calculate_distance(left_hip, left_hip, axis="x"))
-
-    elif action_type == "arm_span":  # 水平最遠臂展
-        left_wrist = landmarks[mp_pose.PoseLandmark.LEFT_WRIST]
-        right_wrist = landmarks[mp_pose.PoseLandmark.RIGHT_WRIST]
-        max_distances["arm_span"] = max(max_distances["arm_span"],
-                                        calculate_distance(left_wrist, right_wrist, axis="x"))
-
-# 開啟相機
+# 初始化攝影機
 cap = cv2.VideoCapture(0)
 
-# 選擇動作類型
-action_type = "left_step"  # 可更改為 "right_step", "squat_time", "hand_height", "leg_height", "hip_distance", "arm_span"
+# 記錄初始位置
+initial_positions = {}
 
-while cap.isOpened():
-    ret, frame = cap.read()
-    if not ret:
-        break
+# 將比例座標轉換為像素座標
+def to_pixel_coordinates(landmark, width, height):
+    return int(landmark.x * width), int(landmark.y * height)
 
-    # 將影像轉為 RGB 格式
-    image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-    image.flags.writeable = False
+# 記錄初始位置
+def record_initial_positions(landmarks, width, height):
+    return {
+        "left_foot": to_pixel_coordinates(landmarks[mp_pose.PoseLandmark.LEFT_FOOT_INDEX], width, height),
+        "right_foot": to_pixel_coordinates(landmarks[mp_pose.PoseLandmark.RIGHT_FOOT_INDEX], width, height),
+        "left_hand": to_pixel_coordinates(landmarks[mp_pose.PoseLandmark.LEFT_INDEX], width, height),
+        "right_hand": to_pixel_coordinates(landmarks[mp_pose.PoseLandmark.RIGHT_INDEX], width, height),
+        "left_hip": to_pixel_coordinates(landmarks[mp_pose.PoseLandmark.LEFT_HIP], width, height),
+        "right_hip": to_pixel_coordinates(landmarks[mp_pose.PoseLandmark.RIGHT_HIP], width, height),
+    }
 
-    # 偵測骨架
-    results = pose.process(image)
+# 計算距離
+def calculate_distance(pos1, pos2):
+    return np.sqrt((pos1[0] - pos2[0])**2 + (pos1[1] - pos2[1])**2)
 
-    # 還原影像格式
-    image.flags.writeable = True
-    image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+# 顯示倒數在畫面上，畫面保持更新
+def countdown_on_screen(seconds, width, height):
+    start_time = time.time()
+    while True:
+        ret, frame = cap.read()
+        if not ret:
+            break
 
-    if results.pose_landmarks:
-        # 繪製骨架
-        mp_drawing.draw_landmarks(
-            image, results.pose_landmarks, mp_pose.POSE_CONNECTIONS)
+        # 翻轉影像，方便觀看
+        frame = cv2.flip(frame, 1)
 
-        # 根據參數執行動作偵測
-        detect_action(image, results.pose_landmarks.landmark, action_type)
+        # 計算剩餘時間
+        remaining_time = seconds - int(time.time() - start_time)
 
-    # 顯示影像
-    cv2.imshow('Detection', image)
+        # 在畫面中央顯示倒數數字
+        cv2.putText(frame, str(remaining_time), (width // 2 - 50, height // 2 + 20), 
+                    cv2.FONT_HERSHEY_SIMPLEX, 3, (0, 0, 255), 10, cv2.LINE_AA)
 
-    # 按 'q' 鍵退出
-    if cv2.waitKey(1) & 0xFF == ord(' '):
-        break
+        # 顯示倒數畫面
+        cv2.imshow("倒數計時", frame)
 
-# 釋放資源
-cap.release()
-cv2.destroyAllWindows()
+        if cv2.waitKey(1) & 0xFF == ord('q') or remaining_time <= 0:
+            break
+
+# 根據參數執行指定的偵測
+def detect_motion(detection_type, initial_positions, landmarks, start_time, width, height):
+    result = None
+
+    if detection_type == "left_step_distance":
+        left_foot = to_pixel_coordinates(landmarks[mp_pose.PoseLandmark.LEFT_FOOT_INDEX], width, height)
+        result = abs(left_foot[0] - initial_positions["left_foot"][0])
+
+    elif detection_type == "right_step_distance":
+        right_foot = to_pixel_coordinates(landmarks[mp_pose.PoseLandmark.RIGHT_FOOT_INDEX], width, height)
+        result = abs(right_foot[0] - initial_positions["right_foot"][0])
+
+    elif detection_type == "squat_time":
+        left_hip = to_pixel_coordinates(landmarks[mp_pose.PoseLandmark.LEFT_HIP], width, height)
+        right_hip = to_pixel_coordinates(landmarks[mp_pose.PoseLandmark.RIGHT_HIP], width, height)
+        if left_hip[1] > initial_positions["left_hip"][1] and right_hip[1] > initial_positions["right_hip"][1]:
+            result = time.time() - start_time
+
+    elif detection_type == "highest_vertical_reach":
+        left_hand = to_pixel_coordinates(landmarks[mp_pose.PoseLandmark.LEFT_INDEX], width, height)
+        right_hand = to_pixel_coordinates(landmarks[mp_pose.PoseLandmark.RIGHT_INDEX], width, height)
+        result = min(left_hand[1], right_hand[1])
+
+    elif detection_type == "widest_horizontal_reach":
+        left_hand = to_pixel_coordinates(landmarks[mp_pose.PoseLandmark.LEFT_INDEX], width, height)
+        right_hand = to_pixel_coordinates(landmarks[mp_pose.PoseLandmark.RIGHT_INDEX], width, height)
+        result = abs(left_hand[0] - right_hand[0])
+
+    elif detection_type == "highest_leg_lift":
+        left_foot = to_pixel_coordinates(landmarks[mp_pose.PoseLandmark.LEFT_FOOT_INDEX], width, height)
+        right_foot = to_pixel_coordinates(landmarks[mp_pose.PoseLandmark.RIGHT_FOOT_INDEX], width, height)
+        result = min(left_foot[1], right_foot[1])
+
+    elif detection_type == "hip_max_distance":
+        left_hip = to_pixel_coordinates(landmarks[mp_pose.PoseLandmark.LEFT_HIP], width, height)
+        right_hip = to_pixel_coordinates(landmarks[mp_pose.PoseLandmark.RIGHT_HIP], width, height)
+        result = max(
+            calculate_distance(left_hip, initial_positions["left_hip"]),
+            calculate_distance(right_hip, initial_positions["right_hip"]),
+        )
+
+    return result
+
+# 主要流程
+def main(detection_type):
+    global initial_positions
+
+    print("請站定位，按 'q' 退出...")
+    while True:
+        ret, frame = cap.read()
+        if not ret:
+            break
+
+        # 翻轉影像，方便觀看
+        frame = cv2.flip(frame, 1)
+        height, width, _ = frame.shape
+        rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        result = pose.process(rgb_frame)
+
+        if result.pose_landmarks:
+            # 繪製姿勢關鍵點
+            mp_drawing.draw_landmarks(frame, result.pose_landmarks, mp_pose.POSE_CONNECTIONS)
+
+            # 紀錄初始位置
+            landmarks = result.pose_landmarks.landmark
+            initial_positions = record_initial_positions(landmarks, width, height)
+            print("初始位置已記錄:", initial_positions)
+            break
+
+        cv2.imshow("站定位", frame)
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+
+    # 倒數顯示在畫面上，畫面持續更新
+    countdown_on_screen(5, width, height)
+
+    # 開始追蹤動作
+    start_time = time.time()
+    print(f"開始進行 {detection_type} 偵測...")
+    detected_value = None
+    while True:
+        ret, frame = cap.read()
+        if not ret:
+            break
+
+        frame = cv2.flip(frame, 1)
+        height, width, _ = frame.shape
+        rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        result = pose.process(rgb_frame)
+
+        if result.pose_landmarks:
+            mp_drawing.draw_landmarks(frame, result.pose_landmarks, mp_pose.POSE_CONNECTIONS)
+
+            # 偵測指定的參數
+            detected_value = detect_motion(detection_type, initial_positions, result.pose_landmarks.landmark, start_time, width, height)
+
+        cv2.imshow(f"{detection_type} 偵測", frame)
+        if cv2.waitKey(1) & 0xFF == ord(' '):
+            break
+
+    print(f"{detection_type} 偵測結果:", detected_value)
+
+    cap.release()
+    cv2.destroyAllWindows()
+
+# 執行程式，傳入偵測項目
+detection_type = "left_step_distance"
+main(detection_type)
