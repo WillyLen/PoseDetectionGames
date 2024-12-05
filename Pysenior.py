@@ -494,7 +494,7 @@ def main():
             self.load_images_and_buttons()
 
             # 换页按钮
-            self.prev_button = tk.Button(self, text="上一页", font=('Arial', 18), command=self.prev_page)
+            self.prev_button = tk.Button(self, text="上一頁", font=('Arial', 18), command=self.prev_page)
             self.prev_button.grid(row=4, column=2, padx=0, pady=0)
 
         def load_images_and_buttons(self):
