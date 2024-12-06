@@ -11,6 +11,9 @@ mp_drawing = mp.solutions.drawing_utils
 
 # 開啟攝影機
 cap = cv2.VideoCapture(0)
+if not cap.isOpened():
+    print("攝影機無法啟動，請檢查設備。")
+    exit()
 
 # 設定計時器
 start_time = None
@@ -25,8 +28,8 @@ font_path = "Resource/font.ttf"  # 替換為您的系統字體路徑
 try:
     font = ImageFont.truetype(font_path, 32)
 except IOError:
-    print(f"無法加載字體：{font_path}")
-    exit()
+    print(f"無法加載字體：{font_path}，將使用預設字體。")
+    font = ImageFont.load_default()
 
 # 偵測狀態標記
 detection_count = 0  # 偵測次數：0 表示第一次，1 表示第二次
@@ -67,7 +70,6 @@ while cap.isOpened():
         remaining_time = capture_duration - int(elapsed_time)
 
         if remaining_time > 0:
-            # 根據偵測次數顯示不同的提示文字
             if detection_count == 0:
                 display_text = f"請保持姿勢: {remaining_time} 秒"
             else:
@@ -79,7 +81,8 @@ while cap.isOpened():
             ]
             detection_count += 1  # 偵測次數加 1
             display_text = "請進行動作"
-            start_time = time.time()
+            start_time = time.time()  # 重置時間
+            max_distance = 0  # 重置最大距離
         else:  # 偵測移動距離
             current_positions = [
                 (lm.x, lm.y, lm.z)
@@ -98,6 +101,8 @@ while cap.isOpened():
 
     # 顯示文字
     annotated_frame = draw_chinese_text(annotated_frame, display_text, (50, 50), font, (255, 0, 0), bold=True)
+    if detection_count >= 1:
+        annotated_frame = draw_chinese_text(annotated_frame, f"最大移動距離: {max_distance:.2f}", (50, 100), font, (0, 255, 0), bold=True)
 
     # 顯示影像
     cv2.imshow("動作捕捉", annotated_frame)
