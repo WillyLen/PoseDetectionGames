@@ -135,11 +135,7 @@ while cap.isOpened():
 
     # 按下空白鍵重置狀態
     if cv2.waitKey(1) & 0xFF == ord(' '):
-        state = "countdown"
-        start_time = None
-        squat_time = None
-        y_start = None
-        print("重置狀態")
+        break
 
 # 釋放資源
 cap.release()

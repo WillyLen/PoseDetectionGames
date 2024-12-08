@@ -111,5 +111,5 @@ def main(target_node):
 
 # 指定節點，例如左手腕節點
 if __name__ == "__main__":
-    target_node = mp_pose.PoseLandmark.LEFT_WRIST.value  # 更改為其他節點編號即可
+    target_node = 18  # 更改為其他節點編號即可
     main(target_node)

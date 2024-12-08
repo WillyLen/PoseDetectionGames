@@ -2,65 +2,88 @@ import cv2
 import mediapipe as mp
 import time
 
-# Mediapipe 初始化
+# 初始化 Mediapipe Pose 模組
 mp_pose = mp.solutions.pose
 pose = mp_pose.Pose()
 mp_drawing = mp.solutions.drawing_utils
 
-# 定義基準高度
-baseline_height = None
-last_raise_time = None
+# 用於記錄時間和動作狀態
+start_time = None
+left_foot_up = False
+right_foot_up = False
+best_time = float('inf')
+current_stage = "START"
 
-# 啟動攝影機
+# 啟動攝像頭
 cap = cv2.VideoCapture(0)
 
-print("請將攝影機對準全身，按下 'q' 結束程式")
+print("請完成抬放左腳和抬放右腳的動作，系統將記錄最短時間。")
 
-while cap.isOpened():
-    ret, frame = cap.read()
-    if not ret:
-        break
+try:
+    while cap.isOpened():
+        ret, frame = cap.read()
+        if not ret:
+            print("無法讀取攝像頭影像。")
+            break
+        
+        # 將影像轉為 RGB 格式
+        image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        results = pose.process(image)
+        
+        # 回到 BGR 格式以便 OpenCV 繪圖
+        image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 
-    # 翻轉影像（可選，讓使用者看起來正常）
-    frame = cv2.flip(frame, 1)
+        if results.pose_landmarks:
+            # 獲取左腳踝與右腳踝的 y 坐標
+            left_ankle = results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_ANKLE]
+            right_ankle = results.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_ANKLE]
+            
+            # 畫出關鍵點
+            mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_pose.POSE_CONNECTIONS)
+            
+            # 判斷腳是否抬起
+            if left_ankle.visibility > 0.5 and left_ankle.y < 0.7:  # 假設 y < 0.4 表示抬起
+                if not left_foot_up:
+                    left_foot_up = True
+                    print("左腳抬起")
+                    if current_stage == "START":
+                        current_stage = "LEFT_UP"
+                        start_time = time.time()
+            
+            if left_ankle.visibility > 0.5 and left_ankle.y >= 0.8:  # 假設 y >= 0.5 表示放下
+                if left_foot_up:
+                    left_foot_up = False
+                    print("左腳放下")
+                    if current_stage == "LEFT_UP":
+                        current_stage = "LEFT_DOWN"
 
-    # 轉為 RGB 並偵測姿勢
-    rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-    results = pose.process(rgb_frame)
+            if right_ankle.visibility > 0.5 and right_ankle.y < 0.7:  # 假設 y < 0.4 表示抬起
+                if not right_foot_up:
+                    right_foot_up = True
+                    print("右腳抬起")
+                    if current_stage == "LEFT_DOWN":
+                        current_stage = "RIGHT_UP"
 
-    if results.pose_landmarks:
-        # 繪製姿勢關鍵點
-        mp_drawing.draw_landmarks(frame, results.pose_landmarks, mp_pose.POSE_CONNECTIONS)
+            if right_ankle.visibility > 0.5 and right_ankle.y >= 0.8:  # 假設 y >= 0.5 表示放下
+                if right_foot_up:
+                    right_foot_up = False
+                    print("右腳放下")
+                    if current_stage == "RIGHT_UP":
+                        end_time = time.time()
+                        duration = end_time - start_time
+                        print(f"完成一套動作，用時: {duration:.2f} 秒")
+                        if duration < best_time:
+                            best_time = duration
+                            print(f"新的最短時間紀錄: {best_time:.2f} 秒")
+                        current_stage = "START"
 
-        # 提取腳踝和膝蓋的關鍵點座標
-        left_ankle = results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_ANKLE]
-        right_ankle = results.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_ANKLE]
-        left_knee = results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_KNEE]
-        right_knee = results.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_KNEE]
+        # 顯示影像
+        cv2.putText(image, f"Best Time: {best_time:.2f}s", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+        cv2.imshow("Foot Detection", image)
 
-        # 初始化基準高度為膝蓋高度（或手動設定固定值）
-        if baseline_height is None:
-            baseline_height = (left_knee.y + right_knee.y) / 2
-
-        # 判斷腳踝是否抬起超過基準
-        left_raised = left_ankle.y < baseline_height
-        right_raised = right_ankle.y < baseline_height
-
-        # 如果兩腳都抬起
-        if left_raised and right_raised:
-            current_time = time.time()
-            if last_raise_time is not None:
-                interval = current_time - last_raise_time
-                print(f"兩腳抬起間隔: {interval:.2f} 秒")
-            last_raise_time = current_time
-
-    # 顯示影像
-    cv2.imshow("Foot Raise Detection", frame)
-
-    # 按 'q' 結束程式
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
-
-# 清理資源
-cap.release()
-cv2.destroyAllWindows()
+        # 按 'q' 退出
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+finally:
+    cap.release()
+    cv2.destroyAllWindows()
