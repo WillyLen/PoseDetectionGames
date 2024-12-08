@@ -39,6 +39,10 @@ def main(target_node):
         print("無法啟動鏡頭")
         return
 
+    # 設定全螢幕視窗
+    cv2.namedWindow("偵測", cv2.WINDOW_NORMAL)
+    cv2.setWindowProperty("偵測", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
+
     phase = "countdown"  # 階段控制
     countdown = 5  # 倒數計時
     countdown_start = time.time()

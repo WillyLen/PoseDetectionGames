@@ -44,6 +44,10 @@ def draw_chinese_text(img, text, position, font, color, bold=False):
     draw.text(position, text, font=font, fill=color)  # 繪製文字
     return cv2.cvtColor(np.array(img_pil), cv2.COLOR_RGB2BGR)
 
+# 設定全螢幕視窗
+cv2.namedWindow("動作捕捉", cv2.WINDOW_NORMAL)
+cv2.setWindowProperty("動作捕捉", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
+
 while cap.isOpened():
     ret, frame = cap.read()
     if not ret:
@@ -74,7 +78,7 @@ while cap.isOpened():
                 annotated_frame = draw_chinese_text(
                     annotated_frame,
                     f"請保持姿勢: {remaining_time} 秒",
-                    (50, 50),
+                    (0, 0),
                     font,
                     (255, 255, 0),
                     bold=True,
@@ -86,7 +90,7 @@ while cap.isOpened():
                 annotated_frame = draw_chinese_text(
                     annotated_frame,
                     "準備開始動作",
-                    (50, 50),
+                    (0, 0),
                     font,
                     (0, 255, 0),
                     bold=True,
@@ -95,8 +99,8 @@ while cap.isOpened():
         elif state == "ready":
             annotated_frame = draw_chinese_text(
                 annotated_frame,
-                "請進行動作",
-                (50, 50),
+                "請進行蹲下起來的動作",
+                (0, 0),
                 font,
                 (255, 255, 0),
                 bold=True,
@@ -116,7 +120,7 @@ while cap.isOpened():
             annotated_frame = draw_chinese_text(
                 annotated_frame,
                 f"動作完成: {squat_time:.2f} 秒",
-                (50, 50),
+                (0, 0),
                 font,
                 (0, 255, 0),
                 bold=True,
@@ -124,7 +128,7 @@ while cap.isOpened():
             annotated_frame = draw_chinese_text(
                 annotated_frame,
                 "按空白鍵重置",
-                (50, 100),
+                (0, 50),
                 font,
                 (0, 255, 255),
                 bold=True,

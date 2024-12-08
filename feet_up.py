@@ -1,6 +1,8 @@
+from PIL import Image, ImageDraw, ImageFont
 import cv2
 import mediapipe as mp
 import time
+import numpy as np
 
 # 初始化 Mediapipe Pose 模組
 mp_pose = mp.solutions.pose
@@ -18,6 +20,26 @@ current_stage = "START"
 cap = cv2.VideoCapture(0)
 
 print("請完成抬放左腳和抬放右腳的動作，系統將記錄最短時間。")
+
+# 創建全螢幕窗口
+cv2.namedWindow("Foot Detection", cv2.WINDOW_NORMAL)
+cv2.setWindowProperty("Foot Detection", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
+
+# 設定字型
+font_path = "Resource/font.ttf"  # 替換為您的中文字體檔案路徑
+try:
+    font = ImageFont.truetype(font_path, 30)  # 字體大小可調整
+except IOError:
+    print(f"無法加載字體：{font_path}")
+    exit()
+
+# 在影像上繪製中文文字
+def draw_chinese_text(image, text, position, font, color):
+    """在 OpenCV 圖像上繪製中文文字"""
+    img_pil = Image.fromarray(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+    draw = ImageDraw.Draw(img_pil)
+    draw.text(position, text, font=font, fill=color)
+    return cv2.cvtColor(np.array(img_pil), cv2.COLOR_RGB2BGR)
 
 try:
     while cap.isOpened():
@@ -77,12 +99,13 @@ try:
                             print(f"新的最短時間紀錄: {best_time:.2f} 秒")
                         current_stage = "START"
 
-        # 顯示影像
-        cv2.putText(image, f"Best Time: {best_time:.2f}s", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+        # 顯示中文文字
+        image = draw_chinese_text(image, f"請抬起左腳後抬起右腳", (0, 0), font, (255, 0, 0))
+        image = draw_chinese_text(image, f"最佳紀錄: {best_time:.2f} 秒", (0, 50), font, (255, 0, 0))
         cv2.imshow("Foot Detection", image)
 
         # 按 'q' 退出
-        if cv2.waitKey(1) & 0xFF == ord('q'):
+        if cv2.waitKey(1) & 0xFF == ord(' '):
             break
 finally:
     cap.release()
