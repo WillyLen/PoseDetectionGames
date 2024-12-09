@@ -94,7 +94,10 @@ def detect(target_node,ori_node_1, ori_node_2, Mode, save_num):
                 frame = put_chinese_text(frame, f"請就定位 {int(remaining_time)} 秒", (50, 50))
                 if remaining_time <= 0:
                     start_position = ori_position
+                    max_distance = 0  # 初始化最大距離
+                    last_max_update_time = time.time()  # 重置時間
                     phase = "detect"
+
             
             # 偵測階段
             elif phase == "detect":
@@ -105,7 +108,7 @@ def detect(target_node,ori_node_1, ori_node_2, Mode, save_num):
                 if distance > max_distance:
                     max_distance = distance
                     last_max_update_time = time.time()  # 更新最後一次修改的時間
-                frame = put_chinese_text(frame, f"最大距離: {int(max_distance)} px", (50, 100))
+                frame = put_chinese_text(frame, f"最大距離: {int(max_distance)}", (50, 100))
 
                 # 判斷是否穩定
                 if time.time() - last_max_update_time >= stable_duration:

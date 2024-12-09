@@ -106,10 +106,10 @@ def leg_up_detect():
                                 print(f"新的最短時間紀錄: {best_time:.2f} 秒")
                                 # DataSave
                                 if grab_upload_data_float(22) == 0:
-                                    update_upload_data(22, round(best_time,1))
+                                    update_upload_data(22, round(best_time,2))
                                 else:
-                                    if grab_upload_data_float(22) > round(best_time,1):
-                                        update_upload_data(22, round(best_time,1))
+                                    if grab_upload_data_float(22) > round(best_time,2):
+                                        update_upload_data(22, round(best_time,2))
                             current_stage = "START"
 
             # 顯示中文文字
@@ -123,3 +123,4 @@ def leg_up_detect():
     finally:
         cap.release()
         cv2.destroyAllWindows()
+# leg_up_detect()

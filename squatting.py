@@ -92,6 +92,7 @@ def squatting_detect():
                     )
                 else:
                     y_start = hip_y  # 記錄原始高度
+                    print(y_start)
                     state = "ready"
                     start_time = None
                     annotated_frame = draw_chinese_text(
@@ -112,22 +113,22 @@ def squatting_detect():
                     (255, 255, 0),
                     bold=True,
                 )
-                if len(y_positions) >= 2 and y_positions[-1] > y_start + 0.02:  # 偵測超過原始高度
+                if len(y_positions) >= 2 and y_positions[-1] > y_start + 0.1:  # 偵測超過原始高度
                     state = "action"
                     start_time = time.time()
                     print("動作開始")
 
             elif state == "action":
-                if len(y_positions) >= 2 and y_positions[-1] <= y_start + 0.02:  # 回到原始高度
+                if len(y_positions) >= 2 and y_positions[-1] <= y_start + 0.1 and time.time() - start_time > 1.5:  # 回到原始高度
                     squat_time = time.time() - start_time
                     state = "done"
                     print(f"動作完成，用時：{squat_time:.2f} 秒")
                     # DataSave
                     if grab_upload_data_float(23) == 0:
-                        update_upload_data(23, round(squat_time,1))
+                        update_upload_data(23, round(squat_time,2))
                     else:
-                        if grab_upload_data_float(23) > round(squat_time,1):
-                            update_upload_data(23, round(squat_time,1))
+                        if grab_upload_data_float(23) > round(squat_time,2):
+                            update_upload_data(23, round(squat_time,2))
 
             elif state == "done":
                 annotated_frame = draw_chinese_text(
@@ -157,3 +158,4 @@ def squatting_detect():
     # 釋放資源
     cap.release()
     cv2.destroyAllWindows()
+# squatting_detect()
