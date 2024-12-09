@@ -3,6 +3,12 @@ import cv2
 import mediapipe as mp
 import numpy as np
 import time
+import sys
+import os
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from Utils import update_game_data, grab_game_data, update_upload_data, grab_upload_data, grab_upload_data_float
 
 # 初始化 Mediapipe
 mp_pose = mp.solutions.pose
@@ -15,8 +21,14 @@ start_position = None
 last_max_update_time = None  # 用於記錄最大距離最後一次更新的時間
 
 # 計算兩點距離
-def calculate_distance(point1, point2):
-    return ((point1[0] - point2[0]) ** 2 + (point1[1] - point2[1]) ** 2) ** 0.5
+def calculate_distance(point1, point2, mode):
+    if mode == "horizontal":
+        return abs(point1[0] - point2[0])
+    elif mode == "vertical":
+        return abs(point1[1] - point2[1])
+    else:
+        raise ValueError("模式必須是 'horizontal' 或 'vertical'")
+
 
 # 在影像上繪製中文文字
 def put_chinese_text(image, text, position, font_path="Resource/font.ttf", font_size=50, color=(0, 0, 255)):
@@ -31,8 +43,9 @@ def put_chinese_text(image, text, position, font_path="Resource/font.ttf", font_
     return cv2.cvtColor(np.array(img_pil), cv2.COLOR_RGB2BGR)
 
 # 主程式
-def main(target_node):
+def detect(target_node,ori_node_1, ori_node_2, Mode, save_num):
     global max_distance, start_position, last_max_update_time
+    mode = Mode
     
     cap = cv2.VideoCapture(0)
     if not cap.isOpened():
@@ -41,7 +54,7 @@ def main(target_node):
 
     # 設定全螢幕視窗
     cv2.namedWindow("偵測", cv2.WINDOW_NORMAL)
-    cv2.setWindowProperty("偵測", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
+    cv2.setWindowProperty("偵測", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_NORMAL)
 
     phase = "countdown"  # 階段控制
     countdown = 5  # 倒數計時
@@ -65,10 +78,10 @@ def main(target_node):
         h, w, _ = frame.shape
         if results.pose_landmarks:
             landmarks = results.pose_landmarks.landmark
-            # 計算胸腔節點中心
-            chest_x = (landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER].x + landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER].x) / 2 * w
-            chest_y = (landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER].y + landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER].y) / 2 * h
-            chest_position = (chest_x, chest_y)
+            # 計算原點節點中心
+            ori_x = (landmarks[ori_node_1].x + landmarks[ori_node_2].x) / 2 * w
+            ori_y = (landmarks[ori_node_1].y + landmarks[ori_node_2].y) / 2 * h
+            ori_position = (ori_x, ori_y)
 
             # 目標節點位置
             target_x = landmarks[target_node].x * w
@@ -80,13 +93,13 @@ def main(target_node):
                 remaining_time = countdown - (time.time() - countdown_start)
                 frame = put_chinese_text(frame, f"請就定位 {int(remaining_time)} 秒", (50, 50))
                 if remaining_time <= 0:
-                    start_position = chest_position
+                    start_position = ori_position
                     phase = "detect"
             
             # 偵測階段
             elif phase == "detect":
                 frame = put_chinese_text(frame, "請開始動作", (50, 50))
-                distance = calculate_distance(target_position, start_position)
+                distance = calculate_distance(target_position, start_position, mode)
 
                 # 判斷最大距離並更新
                 if distance > max_distance:
@@ -102,6 +115,12 @@ def main(target_node):
             elif phase == "finished":
                 frame = put_chinese_text(frame, f"最大距離: {int(max_distance)} px", (50, 100))
                 frame = put_chinese_text(frame, "偵測結束！", (50, 150))
+                # DataSave
+                if grab_upload_data(save_num) == 0:
+                    update_upload_data(save_num, int(max_distance))
+                else:
+                    if grab_upload_data(save_num) > int(max_distance):
+                        update_upload_data(save_num, int(max_distance))
 
         # 顯示畫面
         cv2.imshow("偵測", frame)
@@ -112,8 +131,3 @@ def main(target_node):
 
     cap.release()
     cv2.destroyAllWindows()
-
-# 指定節點，例如左手腕節點
-if __name__ == "__main__":
-    target_node = 18  # 更改為其他節點編號即可
-    main(target_node)

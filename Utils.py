@@ -66,6 +66,16 @@ def grab_upload_data(value_index):
             if row[1] == get_accountname():
                 return int(row[value_index])
             
+def grab_upload_data_float(value_index):
+    row = []
+    with open('Data/upload.csv', 'r', newline='', encoding='utf-8') as csvfile:
+        reader = csv.reader(csvfile)
+        for row in reader:
+            if row and row[0].startswith('#'):
+                continue
+            if row[1] == get_accountname():
+                return float(row[value_index])
+            
 def update_game_data(new_value_index, new_value):
     rows = []
     with open('Data/game.csv', 'r', newline='') as csvfile:

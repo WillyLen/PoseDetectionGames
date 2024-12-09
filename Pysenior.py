@@ -25,13 +25,17 @@ from cryptography.hazmat.primitives import padding
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from Utils import update_game_data, grab_game_data, update_upload_data, grab_upload_data
+from Utils import update_game_data, grab_game_data, update_upload_data, grab_upload_data, grab_upload_data_float
 from Utils import update_verify_data, grab_verify_data, grab_verify_data_int
 from Utils import get_mac, hash_mac, hash_str, generate_key, hash_x, hash_key 
 from Utils import encrypt, encrypt_csv, decrypt, decrypt_csv
 from Upload import upload_data
 from Games import start_game_1,start_game_2,start_game_3,start_game_4,start_game_5,start_game_6,start_game_7,start_game_8,start_game_9,start_game_10
 from Games import start_game_11,start_game_12,start_game_13,start_game_14,start_game_15,start_game_16,start_game_17,start_game_18,start_game_19,start_game_20
+from new_detect import detect
+from feet_up import leg_up_detect
+from squatting import squatting_detect
+from Detectori import show_camera_with_pose
 
 ENCRYPTKEY = "032118800"
 
@@ -41,22 +45,22 @@ global RELOADING
 RELOADING = False
 
 games = [
-    {"code": "1", "record_code": "2", "name": "躲隕石", "scene_image": "Game_1_1.png", "intro_image": "Act_1_1.png", "intro_text": "移動身體來操控人物躲避物品，時間過越久分數越高"},
-    {"code": "2", "record_code": "3", "name": "接金幣", "scene_image": "Game_1_2.png", "intro_image": "Act_1_2.png", "intro_text": "移動身體來操控人物接金幣，時間到接越多顆分數越高"},
-    {"code": "3", "record_code": "4", "name": "挖蘿蔔", "scene_image": "Game_1_3.png", "intro_image": "Act_1_3.png", "intro_text": "身體來回蹲下操控鏟子挖出蘿蔔得分"},
-    {"code": "4", "record_code": "5", "name": "追趕跳碰", "scene_image": "Game_1_4.png", "intro_image": "Act_1_4.png", "intro_text": "雙腳保持頻率抬高，速度加快，反之減速，被狼追到就會結束遊戲"},
-    {"code": "5", "record_code": "6", "name": "抓蝴蝶", "scene_image": "Game_1_5.png", "intro_image": "Act_1_5.png", "intro_text": "雙手即網子，用兩個網子捕捉蝴蝶"},
-    {"code": "6", "record_code": "7", "name": "鬆土", "scene_image": "Game_2_1.png", "intro_image": "Act_2_1.png", "intro_text": "雙手重複舉高放下，時限內去除越多稻草分數越高"},
-    {"code": "7", "record_code": "8", "name": "踩水車", "scene_image": "Game_2_2.png", "intro_image": "Act_2_2.png", "intro_text": "當畫面出現左腳時抬左腳，反之右腳，每次踏步農田都會產生變化"},
-    {"code": "8", "record_code": "9", "name": "施肥", "scene_image": "Game_2_3.png", "intro_image": "Act_2_3.png", "intro_text": "雙手向上舉起，每做一次就會長出一片稻穗"},
-    {"code": "9", "record_code": "10", "name": "收割", "scene_image": "Game_2_4.png", "intro_image": "Act_2_4.png", "intro_text": "雙手向上舉起，每做一次就會割下一片稻穗"},
-    {"code": "10", "record_code": "11", "name": "椿米", "scene_image": "Game_2_5.png", "intro_image": "Act_2_5.png", "intro_text": "雙腳張開與肩同寬，將腿部抬高，再放下"},
-    {"code": "11", "record_code": "12", "name": "刺氣球", "scene_image": "Game_3_1.png", "intro_image": "Act_3_1.png", "intro_text": "當氣球出現於腳下時，可舉腳踩踏，若身體過於傾斜，人物將會跌倒"},
-    {"code": "12", "record_code": "13", "name": "接雞蛋", "scene_image": "Game_3_2.png", "intro_image": "Act_3_2.png", "intro_text": "移動骨盆來控制接雞蛋的位置，一個一分"},
-    {"code": "13", "record_code": "14", "name": "接果子", "scene_image": "Game_3_3.png", "intro_image": "Act_3_3.png", "intro_text": "身體呈側身，將手臂伸往前，控制籃子接果實，需再回到綠點，才能出現下一個"},
-    {"code": "14", "record_code": "15", "name": "踩氣球", "scene_image": "Game_3_4.png", "intro_image": "Act_3_4.png", "intro_text": "當氣球出現於腳下時，可舉腳踩踏，若身體過於傾斜，人物將會跌倒"},
-    {"code": "15", "record_code": "16", "name": "跳舞機", "scene_image": "Game_3_5.png", "intro_image": "Act_3_5.png", "intro_text": "用雙手伸向紅箭頭之位置後，回到中心綠點，才會有下一個紅箭頭出現"},
-    {"code": "16", "record_code": "17", "name": "太空戰", "scene_image": "Game_4_1.png", "intro_image": "Act_4_1.png", "intro_text": "身體控制飛船左右，舉手發射子彈"},
+    {"code": "1", "record_code": "2", "name": "躲隕石", "scene_image": "Game_1_1.png", "intro_image": "Act_1_1.png", "intro_text": "移動身體來操控人物躲避物品，時間過越久分數越高","detect_code": "24" ,"detect_text": "左跨步距離: "},
+    {"code": "2", "record_code": "3", "name": "接金幣", "scene_image": "Game_1_2.png", "intro_image": "Act_1_2.png", "intro_text": "移動身體來操控人物接金幣，時間到接越多顆分數越高","detect_code": "25" ,"detect_text": "右跨步距離: "},
+    {"code": "3", "record_code": "4", "name": "挖蘿蔔", "scene_image": "Game_1_3.png", "intro_image": "Act_1_3.png", "intro_text": "身體來回蹲下操控鏟子挖出蘿蔔得分","detect_code": "23" ,"detect_text": "蹲下起來時間: "},
+    {"code": "4", "record_code": "5", "name": "追趕跳碰", "scene_image": "Game_1_4.png", "intro_image": "Act_1_4.png", "intro_text": "雙腳保持頻率抬高，速度加快，反之減速，被狼追到就會結束遊戲","detect_code": "22" ,"detect_text": "兩腳抬起時間間隔: "},
+    {"code": "5", "record_code": "6", "name": "抓蝴蝶", "scene_image": "Game_1_5.png", "intro_image": "Act_1_5.png", "intro_text": "雙手即網子，用兩個網子捕捉蝴蝶","detect_code": "28" ,"detect_text": "最高臂展: "},
+    {"code": "6", "record_code": "7", "name": "鬆土", "scene_image": "Game_2_1.png", "intro_image": "Act_2_1.png", "intro_text": "雙手重複舉高放下，時限內去除越多稻草分數越高","detect_code": "28" ,"detect_text": "最高臂展: "},
+    {"code": "7", "record_code": "8", "name": "踩水車", "scene_image": "Game_2_2.png", "intro_image": "Act_2_2.png", "intro_text": "當畫面出現左腳時抬左腳，反之右腳，每次踏步農田都會產生變化","detect_code": "26" ,"detect_text": "最高左抬腳距離: "},
+    {"code": "8", "record_code": "9", "name": "施肥", "scene_image": "Game_2_3.png", "intro_image": "Act_2_3.png", "intro_text": "雙手向上舉起，每做一次就會長出一片稻穗","detect_code": "28" ,"detect_text": "最高臂展: "},
+    {"code": "9", "record_code": "10", "name": "收割", "scene_image": "Game_2_4.png", "intro_image": "Act_2_4.png", "intro_text": "雙手向上舉起，每做一次就會割下一片稻穗","detect_code": "28" ,"detect_text": "最高臂展: "},
+    {"code": "10", "record_code": "11", "name": "椿米", "scene_image": "Game_2_5.png", "intro_image": "Act_2_5.png", "intro_text": "雙腳張開與肩同寬，將腿部抬高，再放下","detect_code": "27" ,"detect_text": "最高右抬腳距離: "},
+    {"code": "11", "record_code": "12", "name": "刺氣球", "scene_image": "Game_3_1.png", "intro_image": "Act_3_1.png", "intro_text": "當氣球出現於腳下時，可舉腳踩踏，若身體過於傾斜，人物將會跌倒","detect_code": "29" ,"detect_text": "左最遠臂展: "},
+    {"code": "12", "record_code": "13", "name": "接雞蛋", "scene_image": "Game_3_2.png", "intro_image": "Act_3_2.png", "intro_text": "移動骨盆來控制接雞蛋的位置，一個一分","detect_code": "31" ,"detect_text": "髖關節最遠移動距離: "},
+    {"code": "13", "record_code": "14", "name": "接果子", "scene_image": "Game_3_3.png", "intro_image": "Act_3_3.png", "intro_text": "身體呈側身，將手臂伸往前，控制籃子接果實，需再回到綠點，才能出現下一個","detect_code": "30" ,"detect_text": "右最遠臂展: "},
+    {"code": "14", "record_code": "15", "name": "踩氣球", "scene_image": "Game_3_4.png", "intro_image": "Act_3_4.png", "intro_text": "當氣球出現於腳下時，可舉腳踩踏，若身體過於傾斜，人物將會跌倒","detect_code": "27" ,"detect_text": "最高右抬腳距離: "},
+    {"code": "15", "record_code": "16", "name": "跳舞機", "scene_image": "Game_3_5.png", "intro_image": "Act_3_5.png", "intro_text": "用雙手伸向紅箭頭之位置後，回到中心綠點，才會有下一個紅箭頭出現","detect_code": "28" ,"detect_text": "最高臂展: "},
+    {"code": "16", "record_code": "17", "name": "太空戰", "scene_image": "Game_4_1.png", "intro_image": "Act_4_1.png", "intro_text": "身體控制飛船左右，舉手發射子彈","detect_code": "28" ,"detect_text": "最高臂展: "},
     {"code": "17", "record_code": "18", "name": "桌球", "scene_image": "Game_4_2.png", "intro_image": "Act_4_2.png", "intro_text": "手掌控制擋板上下，球進結束遊戲，按下空白鍵結束"},
     {"code": "18", "record_code": "19", "name": "貪食蛇", "scene_image": "Game_4_3.png", "intro_image": "Act_4_3.png", "intro_text": "手掌控制擋板上下，球進結束遊戲，按下空白鍵結束"},
     {"code": "19", "record_code": "20", "name": "跑酷鳥", "scene_image": "Game_4_4.png", "intro_image": "Act_4_4.png", "intro_text": "頭部控制飛鳥上下移動，每過一個階段速度將會提升，碰到水管遊戲結束"},
@@ -544,7 +548,12 @@ def main():
             game_record = tk.Label(self, text="最高紀錄 : " + str(grab_upload_data(int(self.game_data['record_code']))), bg="lightsteelblue", fg="blue", font=("Helvetica", 40, "bold"), width=15)
             game_record.grid(row=0, column=0, columnspan=2, pady=5)
             #記錄欄位
-            game_record = tk.Label(self, text="最高紀錄 : " + str(grab_upload_data(int(self.game_data['record_code']))), bg="lightsteelblue", fg="blue", font=("Helvetica", 40, "bold"), width=15)
+            if self.game_data['code']in ['3', '4']:
+                game_record = tk.Label(self, text=self.game_data['detect_text'] + str(grab_upload_data_float(int(self.game_data['detect_code']))), bg="lightsteelblue", fg="blue", font=("Helvetica", 40, "bold"))
+            elif self.game_data['code']in ['17', '18', '19', '20']:
+                game_record = tk.Label(self, text= "名稱: " + self.game_data['name'], bg="lightsteelblue", fg="blue", font=("Helvetica", 40, "bold"))
+            else:
+                game_record = tk.Label(self, text=self.game_data['detect_text'] + str(grab_upload_data(int(self.game_data['detect_code']))), bg="lightsteelblue", fg="blue", font=("Helvetica", 40, "bold"))
             game_record.grid(row=0, column=2, columnspan=2, pady=5)
 
             # 游戏场景图片
@@ -576,20 +585,34 @@ def main():
             pg_manager.show_page(IntroPage, self.game_data)
 
         def detect(self):
-            if self.game_data['code'] in ['1', '2', '3', '16']:
-                subprocess.Popen(["python", "Detect.py", self.game_data['code'], '11', '12'])  # 左肩: 11 + 右肩: 12
-            elif self.game_data['code'] in ['4', '7', '10', '14']:
-                subprocess.Popen(["python", "Detect.py", self.game_data['code'], '25', '26'])  # 左膝: 25 + 右膝: 26
-            elif self.game_data['code'] in ['5', '6', '8', '9', '11', '13', '15', '17']:
-                subprocess.Popen(["python", "Detect.py", self.game_data['code'], '17', '18'])  # 左腕: 17 + 右腕: 18
+            if self.game_data['code'] in ['5', '6', '8', '9', '15', '16']:
+                detect(17, 11, 12, 'horizontal',28) #最高臂展（垂直）
+            elif self.game_data['code'] in ['10', '14']:
+                detect(26, 27, 28, 'vertical',27)   #最高右抬腳距離
+            elif self.game_data['code'] == '1':
+                detect(27, 27, 28, 'horizontal',24) #左跨步距離
+            elif self.game_data['code'] == '2':
+                detect(28, 27, 28, 'horizontal',25) #右跨步距離
+            elif self.game_data['code'] == '3':
+                squatting_detect()                  #蹲下起來時間
+            elif self.game_data['code'] == '4':
+                leg_up_detect()                  #兩腳抬起時間間隔
+            elif self.game_data['code'] == '7':
+                detect(25, 27, 28, 'vertical',26)   #最高左抬腳距離
+            elif self.game_data['code'] == '11':
+                detect(17, 11, 12, 'horizontal',29) #左最遠臂展（水平）
+            elif self.game_data['code'] == '13':
+                detect(18, 11, 12, 'horizontal',30) #右最遠臂展（水平）
             elif self.game_data['code'] == '12':
-                subprocess.Popen(["python", "Detect.py", self.game_data['code'], '23', '24'])  # 左臀: 23 + 右臀: 24
+                detect(23, 11, 12, 'horizontal',31) #髖關節最遠移動距離
+            elif self.game_data['code'] == '17':
+                show_camera_with_pose(self.game_data['code'], 17, 18)             #蹲下起來時間
             elif self.game_data['code'] == '18':
-                subprocess.Popen(["python", "Detect.py", self.game_data['code'], '21', '22'])  # 左拇指: 21 + 右拇指: 22
+                show_camera_with_pose(self.game_data['code'], 21, 22)             #蹲下起來時間
             elif self.game_data['code'] == '19':
-                subprocess.Popen(["python", "Detect.py", self.game_data['code'], '1', '4'])   # 左眼: 1 + 右眼: 4
+                show_camera_with_pose(self.game_data['code'], 1, 4)             #蹲下起來時間
             elif self.game_data['code'] == '20':
-                subprocess.Popen(["python", "Detect.py", self.game_data['code'], '1', '4'])   # 左眼: 1 + 右眼: 4
+                show_camera_with_pose(self.game_data['code'], 1, 4)             #蹲下起來時間
         
         def start(self):
             if self.game_data['code'] in start_games:
