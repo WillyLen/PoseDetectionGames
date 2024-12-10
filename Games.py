@@ -1009,7 +1009,7 @@ def start_game_4():
             pygame.sprite.Sprite.__init__(self)
             self.image = wolf_imgs[0]
             self.rect = self.image.get_rect()
-            self.rect.centerx = WIDTH * 5 / 6
+            self.rect.centerx = WIDTH * 4 / 6
             self.rect.bottom = HEIGHT * 9 / 10
             self.frame = 0
             self.last_update = pygame.time.get_ticks()
@@ -1134,11 +1134,11 @@ def start_game_4():
 
                 if 3 <= time_diff <= 7:  # 如果時間差在3到7秒之間
                     speed += 1
-                    wolf.rect.centerx += WIDTH / 12
+                    wolf.rect.centerx -= WIDTH / 12
                     print("Speed increased to:", speed)
                 elif time_diff < 3:  # 如果間隔時間小於3秒，減速
                     speed -= 1
-                    wolf.rect.centerx -= WIDTH / 12
+                    wolf.rect.centerx += WIDTH / 12
                     print("Speed decreased to:", speed)
 
                 # 重置時間記錄，避免重複計算
@@ -3642,7 +3642,7 @@ def start_game_13():
             self.image.set_colorkey(BLACK)
             self.rect = self.image.get_rect()
             self.radius = WIDTH / 20 * cha_size
-            self.rect.x = HEIGHT * 0.85
+            self.rect.x = WIDTH * 0.85
             self.rect.y = 50
             self.speedy = dropspeed
 

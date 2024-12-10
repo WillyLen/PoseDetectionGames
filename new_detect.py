@@ -122,7 +122,7 @@ def detect(target_node,ori_node_1, ori_node_2, Mode, save_num):
                 if grab_upload_data(save_num) == 0:
                     update_upload_data(save_num, int(max_distance))
                 else:
-                    if grab_upload_data(save_num) > int(max_distance):
+                    if grab_upload_data(save_num) < int(max_distance):
                         update_upload_data(save_num, int(max_distance))
 
         # 顯示畫面
