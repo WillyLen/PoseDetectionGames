@@ -116,7 +116,7 @@ def detect(target_node,ori_node_1, ori_node_2, Mode, save_num):
             
             # 偵測完成階段
             elif phase == "finished":
-                frame = put_chinese_text(frame, f"最大距離: {int(max_distance)} px", (50, 100))
+                frame = put_chinese_text(frame, f"最大距離: {int(max_distance)}", (50, 100))
                 frame = put_chinese_text(frame, "偵測結束！", (50, 150))
                 # DataSave
                 if grab_upload_data(save_num) == 0:

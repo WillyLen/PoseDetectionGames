@@ -33,9 +33,7 @@ from Upload import upload_data
 from Games import start_game_1,start_game_2,start_game_3,start_game_4,start_game_5,start_game_6,start_game_7,start_game_8,start_game_9,start_game_10
 from Games import start_game_11,start_game_12,start_game_13,start_game_14,start_game_15,start_game_16,start_game_17,start_game_18,start_game_19,start_game_20
 from new_detect import detect
-from feet_up import leg_up_detect
-from squatting import squatting_detect
-from Detectori import show_camera_with_pose
+from Detect import leg_up_detect, squatting_detect, show_camera_with_pose
 
 ENCRYPTKEY = "032118800"
 
