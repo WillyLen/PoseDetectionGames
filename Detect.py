@@ -215,7 +215,7 @@ def leg_up_detect():
             image = draw_chinese_text(image, f"最佳紀錄: {best_time:.2f} 秒", (0, 50), font, (0, 0, 255))
             cv2.imshow("Foot Detection", image)
 
-            # 按 'q' 退出
+            # 按 ' ' 退出
             if cv2.waitKey(1) & 0xFF == ord(' '):
                 break
     finally:
@@ -334,7 +334,7 @@ def squatting_detect():
                 if len(y_positions) >= 2 and y_positions[-1] <= y_start + 0.1 and time.time() - start_time > 1.5:  # 回到原始高度
                     squat_time = time.time() - start_time
                     state = "done"
-                    print(f"動作完成，用時：{squat_time:.2f} 秒")
+                    print(f"動作完成，用時：{squat_time:.2f} 秒，按空白鍵退出")
                     # DataSave
                     if grab_upload_data_float(23) == 0:
                         update_upload_data(23, round(squat_time,2))

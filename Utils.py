@@ -78,7 +78,7 @@ def grab_upload_data_float(value_index):
             
 def update_game_data(new_value_index, new_value):
     rows = []
-    with open('Data/game.csv', 'r', newline='') as csvfile:
+    with open('Data/game.csv', 'r', newline='', encoding='utf-8') as csvfile:
         reader = csv.reader(csvfile)
         for row in reader:
             if row and row[0].startswith('#'):
@@ -87,13 +87,13 @@ def update_game_data(new_value_index, new_value):
                 row[new_value_index] = new_value  # 更新指定列的值
             rows.append(row)
 
-    with open('Data/game.csv', 'w', newline='') as csvfile:
+    with open('Data/game.csv', 'w', newline='', encoding='utf-8') as csvfile:
         writer = csv.writer(csvfile)
         writer.writerows(rows)
 
 def grab_game_data(value_index):
     row = []
-    with open('Data/game.csv', 'r', newline='') as csvfile:
+    with open('Data/game.csv', 'r', newline='', encoding='utf-8') as csvfile:
         reader = csv.reader(csvfile)
         for row in reader:
             if row and row[0].startswith('#'):
@@ -107,6 +107,8 @@ def update_verify_data(new_value_index, new_value):
         with open('Data/verify.csv', 'r', newline='') as csvfile:
             reader = csv.reader(csvfile)
             for row in reader:
+                if row and row[0].startswith('#'):
+                    continue
                 row[new_value_index] = new_value  # 更新指定列的值
                 rows.append(row)
 
@@ -119,6 +121,8 @@ def grab_verify_data(value_index):
     with open('Data/verify.csv', 'r', newline='') as csvfile:
         reader = csv.reader(csvfile)
         for row in reader:
+            if row and row[0].startswith('#'):
+                continue
             return row[value_index]
         
 def grab_verify_data_int(value_index):
@@ -126,6 +130,8 @@ def grab_verify_data_int(value_index):
     with open('Data/verify.csv', 'r', newline='') as csvfile:
         reader = csv.reader(csvfile)
         for row in reader:
+            if row and row[0].startswith('#'):
+                continue
             return int(row[value_index])
 
 #獲取每台電腦之固定 MAC Address(綁定電腦)

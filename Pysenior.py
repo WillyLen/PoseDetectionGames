@@ -287,9 +287,11 @@ def main():
                 accountname = self.StringVar.get()
                 with open('Data/accountname.txt', 'w') as file:
                     file.write(accountname)  # 將 accountname 儲存到 txt 檔案
-                with open('Data/game.csv', 'r', newline='') as csvfile:
+                with open('Data/game.csv', 'r', encoding='utf-8', newline='') as csvfile:
                     reader = csv.reader(csvfile)
                     for row in reader:
+                        if row and row[0].startswith('#'):
+                            continue
                         name = row[0]
                         if accountname == name:
                             if RELOADING == False:

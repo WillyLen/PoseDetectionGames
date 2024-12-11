@@ -2,11 +2,11 @@
 
 
 a = Analysis(
-    ['Pysenior.py','Detect.py','Upload.py','Utils.py'],
+    ['Pysenior.py','Detect.py','Upload.py','Utils.py','Games.py','new_detect.py'],
     pathex=[],
     binaries=[],
     datas=[('Data','Data'),('Resource','Resource')],
-    hiddenimports=['Data/verify.csv'],
+    hiddenimports=[],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
