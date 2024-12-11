@@ -5435,7 +5435,6 @@ def start_game_20():
                     if game_over or game_lost:  # 如果遊戲結束或失敗
                         cap.release()
                         pygame.quit()
-                        sys.exit()
 
         if not game_over and not game_lost:
             if blink_triggered:
