@@ -31,4 +31,3 @@ def upload_data():
         print(f"Error: File not found at {csv_file_path}")
     except Exception as e:
         print(f"An error occurred: {e}")
-upload_data()
