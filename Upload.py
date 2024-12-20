@@ -23,11 +23,12 @@ def upload_data():
         with open(csv_file_path, newline='', encoding='utf-8') as csvfile:
             reader = csv.DictReader(csvfile)
             for row in reader:
-                doc_id = row['ID']
+                doc_id = row['使用者帳號']
                 # 将数据写入 Firestore 的 'game_data' 集合
-                db.collection(row['Location']).document(doc_id).set(row)
+                db.collection(row['#場域名稱']).document(doc_id).set(row)
         print("Data uploaded successfully!")
     except FileNotFoundError:
         print(f"Error: File not found at {csv_file_path}")
     except Exception as e:
         print(f"An error occurred: {e}")
+upload_data()

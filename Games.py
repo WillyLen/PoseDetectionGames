@@ -5429,7 +5429,7 @@ def start_game_20():
             if event.type == pygame.QUIT:
                 cap.release()
                 pygame.quit()
-                sys.exit()
+
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:  # 按下空白鍵
                     if game_over or game_lost:  # 如果遊戲結束或失敗
