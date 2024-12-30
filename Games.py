@@ -891,6 +891,9 @@ def start_game_4():
     left_leg_raised = False  # 記錄左腿是否抬起
     right_leg_raised = False  # 記錄右腿是否抬起
 
+    # 抬腳速度
+    leg_up_time = grab_verify_data_int(32)
+
     # 圖片更換
     style = grab_game_data(1)
     if style == 0 or style == None:
@@ -1132,11 +1135,11 @@ def start_game_4():
             if left_leg_raised_time is not None and right_leg_raised_time is not None:
                 time_diff = abs(right_leg_raised_time - left_leg_raised_time) / 1000  # 轉換為秒
 
-                if 3 <= time_diff <= 7:  # 如果時間差在3到7秒之間
+                if leg_up_time-2 <= time_diff <= leg_up_time+2:  # 如果時間差在3到7秒之間
                     speed += 1
                     wolf.rect.centerx -= WIDTH / 12
                     print("Speed increased to:", speed)
-                elif time_diff < 3:  # 如果間隔時間小於3秒，減速
+                elif time_diff < leg_up_time-2:  # 如果間隔時間小於leg_up_time秒，減速
                     speed -= 1
                     wolf.rect.centerx += WIDTH / 12
                     print("Speed decreased to:", speed)

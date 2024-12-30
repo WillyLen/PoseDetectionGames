@@ -104,7 +104,7 @@ def grab_game_data(value_index):
 #更新及讀取認證參數
 def update_verify_data(new_value_index, new_value):
         rows = []
-        with open('Data/verify.csv', 'r', newline='') as csvfile:
+        with open('Data/verify.csv', 'r', newline='', encoding='utf-8') as csvfile:
             reader = csv.reader(csvfile)
             for row in reader:
                 if row and row[0].startswith('#'):
@@ -112,13 +112,13 @@ def update_verify_data(new_value_index, new_value):
                 row[new_value_index] = new_value  # 更新指定列的值
                 rows.append(row)
 
-        with open('Data/verify.csv', 'w', newline='') as csvfile:
+        with open('Data/verify.csv', 'w', newline='', encoding='utf-8') as csvfile:
             writer = csv.writer(csvfile)
             writer.writerows(rows)
 
 def grab_verify_data(value_index):
     row = []
-    with open('Data/verify.csv', 'r', newline='') as csvfile:
+    with open('Data/verify.csv', 'r', newline='', encoding='utf-8') as csvfile:
         reader = csv.reader(csvfile)
         for row in reader:
             if row and row[0].startswith('#'):
@@ -127,7 +127,7 @@ def grab_verify_data(value_index):
         
 def grab_verify_data_int(value_index):
     row = []
-    with open('Data/verify.csv', 'r', newline='') as csvfile:
+    with open('Data/verify.csv', 'r', newline='', encoding='utf-8') as csvfile:
         reader = csv.reader(csvfile)
         for row in reader:
             if row and row[0].startswith('#'):

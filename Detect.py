@@ -5,6 +5,7 @@ import numpy as np
 import time
 from collections import deque
 import sys
+import math
 import os
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -109,119 +110,105 @@ def show_camera_with_pose(code, pos1, pos2):
 # show_camera_with_pose()
 
 def leg_up_detect():
-    # 初始化 Mediapipe Pose 模組
+    # 初始化 Mediapipe Pose
     mp_pose = mp.solutions.pose
-    pose = mp_pose.Pose()
     mp_drawing = mp.solutions.drawing_utils
 
-    # 用於記錄時間和動作狀態
-    start_time = None
-    left_foot_up = False
-    right_foot_up = False
-    best_time = float('inf')
-    current_stage = "START"
+    # 設定蹲下角度和位移閾值
+    SQUAT_ANGLE_THRESHOLD = 85  # 放寬角度限制，根據實際情況調整
+    HIP_VERTICAL_THRESHOLD = 0.05  # 臀部下降幅度（相對於攝像頭畫面比例）
+
+    # 計算角度
+    def calculate_angle(a, b, c):
+        """計算三個點之間的角度"""
+        angle = math.degrees(
+            math.atan2(c[1]-b[1], c[0]-b[0]) - math.atan2(a[1]-b[1], a[0]-b[0])
+        )
+        return abs(angle)
 
     # 啟動攝像頭
     cap = cv2.VideoCapture(0)
+    squat_count = 0
+    is_squatting = False
+    start_time = time.time()
 
-    print("請完成抬放左腳和抬放右腳的動作，系統將記錄最短時間。")
+    # 設定 15 秒計時器
+    TIMER = 15
+    initial_hip_y = None
 
-    # 創建全螢幕窗口
-    cv2.namedWindow("Foot Detection", cv2.WINDOW_NORMAL)
-    cv2.setWindowProperty("Foot Detection", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_NORMAL)
-
-    # 設定字型
-    font_path = "Resource/font.ttf"  # 替換為您的中文字體檔案路徑
-    try:
-        font = ImageFont.truetype(font_path, 30)  # 字體大小可調整
-    except IOError:
-        print(f"無法加載字體：{font_path}")
-        exit()
-
-    # 在影像上繪製中文文字
-    def draw_chinese_text(image, text, position, font, color):
-        """在 OpenCV 圖像上繪製中文文字"""
-        img_pil = Image.fromarray(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
-        draw = ImageDraw.Draw(img_pil)
-        draw.text(position, text, font=font, fill=color)
-        return cv2.cvtColor(np.array(img_pil), cv2.COLOR_RGB2BGR)
-
-    try:
+    with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as pose:
         while cap.isOpened():
             ret, frame = cap.read()
             if not ret:
-                print("無法讀取攝像頭影像。")
                 break
             
-            # 將影像轉為 RGB 格式
-            image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            results = pose.process(image)
+            # 影像處理
+            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            results = pose.process(frame)
+            frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
             
-            # 回到 BGR 格式以便 OpenCV 繪圖
-            image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-
             if results.pose_landmarks:
-                # 獲取左腳踝與右腳踝的 y 坐標
-                left_ankle = results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_ANKLE]
-                right_ankle = results.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_ANKLE]
+                landmarks = results.pose_landmarks.landmark
                 
-                # 畫出關鍵點
-                mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_pose.POSE_CONNECTIONS)
+                # 取得臀部、膝蓋和腳踝座標
+                hip = [landmarks[mp_pose.PoseLandmark.RIGHT_HIP].x,
+                    landmarks[mp_pose.PoseLandmark.RIGHT_HIP].y]
+                knee = [landmarks[mp_pose.PoseLandmark.RIGHT_KNEE].x,
+                        landmarks[mp_pose.PoseLandmark.RIGHT_KNEE].y]
+                ankle = [landmarks[mp_pose.PoseLandmark.RIGHT_ANKLE].x,
+                        landmarks[mp_pose.PoseLandmark.RIGHT_ANKLE].y]
                 
-                # 判斷腳是否抬起
-                if left_ankle.visibility > 0.5 and left_ankle.y < 0.7:  # 假設 y < 0.4 表示抬起
-                    if not left_foot_up:
-                        left_foot_up = True
-                        print("左腳抬起")
-                        if current_stage == "START":
-                            current_stage = "LEFT_UP"
-                            start_time = time.time()
+                # 初始臀部位置
+                if initial_hip_y is None:
+                    initial_hip_y = hip[1]
                 
-                if left_ankle.visibility > 0.5 and left_ankle.y >= 0.8:  # 假設 y >= 0.5 表示放下
-                    if left_foot_up:
-                        left_foot_up = False
-                        print("左腳放下")
-                        if current_stage == "LEFT_UP":
-                            current_stage = "LEFT_DOWN"
-
-                if right_ankle.visibility > 0.5 and right_ankle.y < 0.7:  # 假設 y < 0.4 表示抬起
-                    if not right_foot_up:
-                        right_foot_up = True
-                        print("右腳抬起")
-                        if current_stage == "LEFT_DOWN":
-                            current_stage = "RIGHT_UP"
-
-                if right_ankle.visibility > 0.5 and right_ankle.y >= 0.8:  # 假設 y >= 0.5 表示放下
-                    if right_foot_up:
-                        right_foot_up = False
-                        print("右腳放下")
-                        if current_stage == "RIGHT_UP":
-                            end_time = time.time()
-                            duration = end_time - start_time
-                            print(f"完成一套動作，用時: {duration:.2f} 秒")
-                            if duration < best_time:
-                                best_time = duration
-                                print(f"新的最短時間紀錄: {best_time:.2f} 秒")
-                                # DataSave
-                                if grab_upload_data_float(22) == 0:
-                                    update_upload_data(22, round(best_time,2))
-                                else:
-                                    if grab_upload_data_float(22) > round(best_time,2):
-                                        update_upload_data(22, round(best_time,2))
-                            current_stage = "START"
-
-            # 顯示中文文字
-            image = draw_chinese_text(image, f"請抬起左腳後抬起右腳", (0, 0), font, (0, 0, 255))
-            image = draw_chinese_text(image, f"最佳紀錄: {best_time:.2f} 秒", (0, 50), font, (0, 0, 255))
-            cv2.imshow("Foot Detection", image)
-
-            # 按 ' ' 退出
-            if cv2.waitKey(1) & 0xFF == ord(' '):
+                # 計算膝蓋角度
+                angle = calculate_angle(hip, knee, ankle)
+                # cv2.putText(frame, f'Angle: {int(angle)}', (10, 30),
+                #             cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
+                
+                # 判斷臀部是否下降
+                hip_drop = initial_hip_y - hip[1]
+                # cv2.putText(frame, f'Hip Drop: {hip_drop:.2f}', (10, 70),
+                #             cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 0), 2, cv2.LINE_AA)
+                
+                # 判斷是否蹲下（角度 + 臀部下降）
+                if angle < SQUAT_ANGLE_THRESHOLD and hip_drop > HIP_VERTICAL_THRESHOLD:
+                    if not is_squatting:
+                        squat_count += 1
+                        is_squatting = True
+                else:
+                    is_squatting = False
+            
+            # 顯示蹲下次數和計時器
+            elapsed_time = int(time.time() - start_time)
+            cv2.putText(frame, f'Squats: {squat_count}', (10, 70),
+                        cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2, cv2.LINE_AA)
+            cv2.putText(frame, f'Time: {TIMER - elapsed_time}', (10, 30),
+                        cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2, cv2.LINE_AA)
+            
+            # 顯示結果
+            cv2.imshow('Squat Counter', frame)
+            
+            # 結束條件
+            if elapsed_time >= TIMER:
+                record = int(15/squat_count)
+                # DataSave
+                if grab_upload_data(32) == 0:
+                    update_upload_data(32, record)
+                else:
+                    if grab_upload_data(32) > record:
+                        update_upload_data(32, record)
+                print(f'15秒內的蹲下次數: {squat_count}')
                 break
-    finally:
-        cap.release()
-        cv2.destroyAllWindows()
-# leg_up_detect()
+            
+            if cv2.waitKey(10) & 0xFF == ord(' '):
+                break
+
+    # 釋放資源
+    cap.release()
+    cv2.destroyAllWindows()
+
 
 def squatting_detect():
     # 初始化 Mediapipe
