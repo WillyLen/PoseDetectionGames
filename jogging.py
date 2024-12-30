@@ -10,11 +10,13 @@ pose = mp_pose.Pose(static_image_mode=False, min_detection_confidence=0.5, min_t
 # 遊戲參數
 GAME_DURATION = 30  # 遊戲時間 (秒)
 SPEED_THRESHOLD = 0.5  # 速度閾值 (越小越慢)
+MIN_VALID_MOVEMENT = 0.01  # 最小有效移動閾值
 
 # 計時器和分數
 start_time = time.time()
 score = 0
 last_position = None
+last_time = time.time()
 
 # 啟動攝像頭
 cap = cv2.VideoCapture(0)
@@ -38,13 +40,14 @@ while cap.isOpened():
         right_ankle = results.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_ANKLE]
         current_position = (left_ankle.y + right_ankle.y) / 2
         
-        # 計算速度
-        if last_position is not None:
+        # 確保有有效的移動
+        if last_position is not None and abs(current_position - last_position) > MIN_VALID_MOVEMENT:
             speed = abs(current_position - last_position) / (time.time() - last_time)
-            if speed < SPEED_THRESHOLD:
-                score += 1  # 合格，加分
-            else:
-                score -= 1  # 太快，扣分
+            if speed > 0:  # 檢查是否有有效速度
+                if speed < SPEED_THRESHOLD:
+                    score += 1  # 合格，加分
+                else:
+                    score -= 1  # 太快，扣分
         
         last_position = current_position
         last_time = time.time()
@@ -61,7 +64,7 @@ while cap.isOpened():
         print(f'Game Over! Your final score is: {score}')
         break
     
-    if cv2.waitKey(5) & 0xFF == ord(' '):
+    if cv2.waitKey(5) & 0xFF == 27:
         break
 
 cap.release()
