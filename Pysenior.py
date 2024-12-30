@@ -360,8 +360,8 @@ def main():
             accountname = self.StringVar.get()
             location = grab_verify_data(7)
 
-            new_account_upload = [location,accountname,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-            new_account_game = [accountname,0,10,10,10,3,3,3,10,10,5,30]
+            new_account_upload = [location,accountname,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+            new_account_game = [accountname,0,10,10,10,3,3,3,10,10,5,30,2]
 
             # 將資料追加到 CSV 檔案的最後一行
             with open('Data/upload.csv','a', newline='') as csvfile:
@@ -501,6 +501,10 @@ def main():
             self.prev_button = tk.Button(self, text="上一頁", font=('Arial', 18), command=self.prev_page)
             self.prev_button.grid(row=4, column=2, padx=0, pady=0)
 
+            # 上傳按钮
+            self.upload_button = tk.Button(self, text="上傳", font=('Arial', 18), command=self.upload)
+            self.upload_button.grid(row=4, column=4, padx=0, pady=0)
+
         def load_images_and_buttons(self):
             for idx, game in enumerate(self.games):
                 image_path = f"Resource/img/gamelist/{game['scene_image']}"  # 使用 games 数据的图片路径
@@ -528,6 +532,9 @@ def main():
         def prev_page(self):
             # 切换到第一个UI页面
             pg_manager.show_page(StyleChoosePage)
+
+        def upload(self):
+            upload_data()
 
         def loading_page(self, game_idx):
             pg_manager.show_page(LoadingPage, self.games[game_idx])
