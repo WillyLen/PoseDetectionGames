@@ -194,11 +194,11 @@ def leg_up_detect():
             if elapsed_time >= TIMER:
                 record = int(15/squat_count)
                 # DataSave
-                if grab_upload_data(32) == 0:
-                    update_upload_data(32, record)
+                if grab_upload_data(22) == 0:
+                    update_upload_data(22, record)
                 else:
-                    if grab_upload_data(32) > record:
-                        update_upload_data(32, record)
+                    if grab_upload_data(22) > record:
+                        update_upload_data(22, record)
                 print(f'15秒內的蹲下次數: {squat_count}')
                 break
             
